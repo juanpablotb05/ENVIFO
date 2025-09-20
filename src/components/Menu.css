@@ -1,0 +1,142 @@
+/* Botón Hamburguesa */
+.hamburger-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 2001; /* siempre por encima del menú */
+  background: #ff6600;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn:hover {
+  background: orange;
+}
+
+.hamburger-line {
+  width: 20px;
+  height: 2px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+/* Sidebar */
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -280px; /* oculto */
+  width: 260px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  transition: left 0.3s ease;
+  z-index: 2000; /* debajo del botón pero encima del contenido */
+  overflow-y: auto;
+}
+
+.side-menu.open {
+  left: 0; /* aparece */
+}
+
+/* Header del menú */
+.menu-header {
+  padding: 18px;
+  background: #ff6600;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Links del menú */
+.side {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.side a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  margin: 4px 0;
+  color: #333;
+  text-decoration: none;
+  font-size: 15px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.side a:hover {
+  background-color: #f97316;
+  color: white;
+}
+
+.side a:active {
+  background-color: #ea580c;
+}
+
+/* Overlay (fondo oscuro al abrir menú) */
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  z-index: 1500; /* debajo del menú pero encima del dashboard */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.menu-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .side-menu {
+    width: 240px;
+  }
+
+  .hamburger-btn {
+    top: 15px;
+    left: 15px;
+    padding: 8px;
+  }
+}
+
+
+
+
+

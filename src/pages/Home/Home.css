@@ -1,0 +1,196 @@
+.landing-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Work Sans', 'Noto Sans', sans-serif;
+  background-color: #fcfaf8;
+}
+
+.landing-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 40px;
+  border-bottom: 1px solid #f4ede7;
+}
+
+.landing-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #1c140d;
+}
+
+.logo-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.landing-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.landing-nav a,
+.btn-login {
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  color: #1c140d;
+}
+
+.btn-login {
+  background-color: #f38524;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 80px 16px;
+  color: white;
+  background-size: cover;
+  background-position: center;
+  background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5)),
+    url('https://lh3.googleusercontent.com/aida-public/AB6AXuBqHUmdddykLhGkoD5ELsUVLxnJ2gqyNRv425_3WIjxcPdrakWbboTHv8Ysl54LU9yCBD2s5Vpwu1_DJT2F7C4dLiFlQG0doG_PoAbs5yMIU-kQagjLlnqbMsPy5h9Gc2AGJk-NUnilAuJTEGIbl5iqHaq3gRalwNJkkmapTQhMID8ETjjSkDR0-_UN58zPWTED2BjbVxUeAKBlt70M8kQK3B4IQ4c_tkHtb6gvUZUkxxbALy6u2QeQfMylzU_HpQtykU6RkI1z_Gk');
+}
+
+.hero-section h1 {
+  font-size: 32px;
+  font-weight: 900;
+}
+
+.hero-section p {
+  margin-top: 8px;
+  max-width: 640px;
+  font-size: 16px;
+}
+
+.btn-portfolio {
+  margin-top: 16px;
+  height: 48px;
+  padding: 0 24px;
+  background-color: #f38524;
+  color: #1c140d;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.projects-section,
+.services-section,
+.about-section,
+.contact-section {
+  padding: 24px 16px 0 16px;
+}
+
+.projects-section h2,
+.services-section h2,
+.about-section h2,
+.contact-section h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #1c140d;
+  padding-bottom: 12px;
+}
+
+.project-card {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.project-image {
+  background-size: cover;
+  background-position: center;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2bL4Xo1EzIPIz67wZcPnplEFJpLxZaNYe4lJswIQVXwJgyxCYQQW3b1w6wTgYmio4cIMfbyvHy0WyydnsSQuP3YNY89RJf_VmN8z0t6IaalLjeDEOJPbrvPR0A7L4jQNuZVRJV3OKf1wj-68lXjt0c8RQ22Jlm_QX4aAdDaSor0CfHLTVyVBI-TRXTWEt3bdANNh9Af1fDS4VzI4q1S-YngrHH9WEIXeJMqxHKQXTCTHvOaXO1QN9gHnYyMspMokDbYcSI-BvRtQ');
+}
+
+.project-card h3 {
+  font-weight: 500;
+  color: #1c140d;
+}
+
+.project-card p {
+  font-size: 14px;
+  color: #9c7049;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.service-card {
+  border: 1px solid #f4ede7;
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.service-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1c140d;
+}
+
+.service-card p {
+  font-size: 14px;
+  color: #9c7049;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 640px;
+}
+
+.contact-form label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1c140d;
+}
+
+.contact-form input,
+.contact-form textarea {
+  margin-top: 4px;
+  padding: 8px;
+  font-size: 14px;
+  background: white;
+  border: 1px solid #f4ede7;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.contact-form button {
+  height: 40px;
+  padding: 0 16px;
+  background-color: #f38524;
+  color: #1c140d;
+  font-weight: bold;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.footer {
+  margin-top: 40px;
+  background-color: #1c140d;
+  color: white;
+  padding: 24px 16px;
+  text-align: center;
+  font-size: 14px;
+}

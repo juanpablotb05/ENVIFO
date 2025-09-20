@@ -1,0 +1,164 @@
+/* Panel Usuarios - improved visuals */
+.panel-usuarios {
+  min-height: 100vh;
+  background: #f3f4f6; /* gray-50 */
+  padding: 28px;
+  box-sizing: border-box;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #111827;
+}
+
+/* Header */
+.header {
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  padding: 16px 20px;
+  border: 1px solid #e6e7ea;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.header h1 {
+  margin: 0 0 6px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.header p {
+  margin: 0;
+  font-size: 13px;
+  color: #6b7280;
+}
+.header-actions .btn-primary { margin-left: 12px; }
+
+/* Buscador */
+.buscador {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.buscador input {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 14px;
+  color: #111827;
+}
+.buscador input::placeholder { color: #9ca3af; }
+.buscador input:focus {
+  outline: none;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96,165,250,0.12);
+}
+.buscador button {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: #ffffff;
+  color: #374151;
+  cursor: pointer;
+}
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.btn-primary:hover { background: #1e40af; }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+}
+
+/* Tabla */
+.tabla-container {
+  margin-top: 18px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(2,6,23,0.06);
+  overflow: hidden;
+  border: 1px solid #e6e7ea;
+}
+.table-scroll { overflow-x: auto; }
+.tabla-container table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+.tabla-container th,
+.tabla-container td {
+  padding: 12px 16px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
+}
+.tabla-container thead th {
+  background: #fafafa;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+/* Improve row contrast and hover */
+tbody tr:nth-child(even) { background: #fcfcfd; }
+.tabla-container tbody tr:hover { background: #f1f5f9; }
+
+.user-cell { font-weight: 600; color: #0f172a; }
+.user-email { display: block; font-size: 12px; color: #6b7280; }
+
+/* Selects and buttons in table */
+.tabla-container select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  min-width: 140px;
+  color: #111827;
+}
+.actions-cell { display: flex; gap: 8px; align-items: center; }
+.action-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e6e7ea;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #0f172a;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+}
+.action-btn:hover { background: #f8fafc; }
+.action-btn.danger { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+
+/* Make action buttons visually distinct and consistent width */
+.action-btn, .action-btn.danger { min-width: 90px; text-align: center; }
+
+/* Badges */
+.badge { display: inline-block; padding: 6px 10px; border-radius: 9999px; font-size: 12px; font-weight: 600; }
+.activo { background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; }
+.inactivo { background: #fff1f2; color: #7f1d1d; border: 1px solid #fecaca; }
+
+.empty { padding: 18px; color: #6b7280; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .buscador { flex-direction: column; align-items: stretch; }
+  .actions-cell { flex-direction: column; align-items: stretch; }
+  .tabla-container table { min-width: 600px; }
+}
+
+@media (max-width: 520px) {
+  .tabla-container table { min-width: 480px; }
+  .action-btn { padding: 6px 8px; font-size: 12px; min-width: 70px; }
+}
+

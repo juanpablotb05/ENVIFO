@@ -1,0 +1,60 @@
+.profile-section {
+  @apply relative flex min-h-screen flex-col items-center justify-center bg-white dark:bg-gray-900;
+}
+
+.profile-header {
+  @apply absolute top-0 h-[200px] w-full bg-black bg-cover;
+  background-image: url("https://demos.creative-tim.com/material-tailwind-kit-react/img/profile-layout-header.jpg");
+}
+
+.profile-card {
+  @apply relative mt-32 w-11/12 max-w-4xl rounded-xl bg-white p-6 shadow-lg dark:bg-gray-800 flex flex-col lg:flex-row lg:justify-between;
+}
+
+.profile-img-container {
+  @apply flex justify-center -mt-24 lg:mt-0 lg:ml-6;
+}
+
+.profile-img {
+  @apply w-40 h-40 rounded-full border-4 border-white shadow-md;
+}
+
+.profile-info {
+  @apply flex-1 mt-4 lg:mt-0 px-6;
+}
+
+.profile-name {
+  @apply text-xl font-bold text-gray-800 dark:text-white;
+}
+
+.profile-email {
+  @apply text-sm text-gray-500 dark:text-gray-400 mb-4;
+}
+
+.profile-details {
+  @apply text-sm text-gray-600 dark:text-gray-300 mb-4 space-y-1;
+}
+
+.profile-description {
+  @apply text-sm text-gray-600 dark:text-gray-400;
+}
+
+.show-more-btn {
+  @apply mt-3 text-xs font-semibold text-blue-500 uppercase;
+}
+
+.profile-stats {
+  @apply flex flex-col items-center justify-center gap-4 lg:w-[200px] text-center mt-6 lg:mt-0;
+}
+
+.stat-number {
+  @apply text-lg font-bold text-gray-800 dark:text-white;
+}
+
+.stat-label {
+  @apply text-xs text-gray-500 dark:text-gray-400;
+}
+
+.connect-btn {
+  @apply mt-2 rounded-md bg-black px-4 py-2 text-xs font-bold uppercase text-white shadow hover:bg-gray-800;
+}

@@ -1,0 +1,29 @@
+.categories-container{max-width:940px;margin:0 auto;padding:24px;font-family:Inter,system-ui,Arial;color:#0f172a}
+.categories-header h1{font-size:24px;margin:0;display:flex;align-items:center;gap:8px}
+.categories-header .muted{color:#6b7280;margin-top:6px}
+.categories-main{margin-top:18px;background:#fff;border:1px solid #e6e7ea;padding:22px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,.06)}
+.category-form{display:flex;flex-direction:column;gap:16px}
+.form-row{display:flex;flex-direction:column;gap:6px}
+.form-row label{font-weight:600;font-size:13px}
+.form-row input{padding:12px 12px;border-radius:10px;border:1px solid #e6e7ea;font-size:15px}
+.input-help{font-size:12px;color:#6b7280;margin-top:4px}
+.form-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.btn-primary{background:#2563eb;color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:700}
+.btn-primary:hover{background:#1d4ed8}
+.btn-ghost{background:#eef2ff;color:#1e40af;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:600}
+.btn-ghost:hover{background:#e0e7ff}
+.banner{padding:10px 12px;border-radius:10px;font-size:14px}
+.banner.success{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+.banner.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+
+.tabs{display:flex;gap:8px;margin:16px 0}
+.tab{padding:8px 12px;border-radius:10px;border:1px solid #e6e7ea;background:#f8fafc;cursor:pointer;font-weight:600;color:#334155}
+.tab.active{background:#eef2ff;color:#1e40af;border-color:#c7d2fe}
+
+.category-list{margin-top:10px;border:1px solid #e6e7ea;border-radius:10px;overflow:hidden}
+.category-list table{width:100%;border-collapse:collapse}
+.category-list th,.category-list td{padding:10px 12px;border-bottom:1px solid #eef0f3;text-align:left;font-size:14px}
+.category-list th{background:#f9fafb;color:#334155;font-weight:700}
+.row-actions{display:flex;gap:8px}
+.action{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:6px 10px;cursor:pointer}
+.action.danger{background:#fef2f2;border-color:#fecaca;color:#991b1b}

@@ -1,0 +1,28 @@
+:root{--bg:#f9fafb;--card:#fff;--muted:#6b7280;--accent:#2563eb}
+.texturas-wrap{max-width:1100px;margin:0 auto;padding:28px;font-family:Inter,system-ui,Arial;color:#0f172a}
+.hero h1{font-size:28px;margin:0 0 6px}
+.hero p{margin:0;color:var(--muted)}
+.card{background:var(--card);border:1px solid #e6e7ea;border-radius:10px;padding:18px;margin-top:18px;box-shadow:0 2px 8px rgba(2,6,23,0.04)}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.card-header h2{margin:0;font-size:16px}
+.card-header p{margin:0;color:var(--muted);font-size:13px}
+.grid-global{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.texture-item{border:1px solid #eef2f7;border-radius:8px;overflow:hidden;background:#fbfdff}
+.texture-preview{height:112px;width:100%}
+.texture-name{padding:8px;font-size:13px;color:#334155}
+@media(min-width:640px){.grid-global{grid-template-columns:repeat(3,1fr)}.texture-preview{height:120px}}
+@media(min-width:900px){.grid-global{grid-template-columns:repeat(5,1fr)}}
+.hidden-input{display:none}
+.btn-upload{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
+.btn-upload:hover{background:#1e40af}
+.empty-state{text-align:center;padding:36px;color:var(--muted)}
+.grid-user{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.user-texture{background:#fbfdff;border:1px solid #eef2f7;border-radius:8px;overflow:hidden;display:flex;flex-direction:column}
+.user-texture-preview{height:144px;background:#f8fafc;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.user-texture-preview img{width:100%;height:100%;object-fit:cover}
+.user-texture-footer{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;font-size:13px}
+.user-actions{display:flex;gap:8px}
+.btn-link{background:#fff;border:1px solid #e6e7ea;padding:6px 8px;border-radius:6px;cursor:pointer}
+.btn-danger{background:#fee2e2;border:1px solid #fecaca;color:#991b1b;padding:6px 8px;border-radius:6px;cursor:pointer}
+@media(min-width:640px){.grid-user{grid-template-columns:repeat(3,1fr)}.user-texture-preview{height:160px}}
+@media(min-width:900px){.grid-user{grid-template-columns:repeat(4,1fr)}}
