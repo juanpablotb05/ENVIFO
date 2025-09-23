@@ -1,8 +1,68 @@
 import React, { useState, useRef } from "react";
 import "./AccountSettings.css";
 import { NavbarL } from "../../components/NavbarL";
+import { useNavigate } from "react-router-dom";
 
 const AccountSettingsUsers = () => {
+      const navigate = useNavigate();
+
+      // --- Leer permisos/rol desde sessionStorage (antes de renderizar o hacer fetch)
+        const rol = sessionStorage.getItem("rol") || "";
+        const editPermisos = sessionStorage.getItem("editPermisos") === "true";
+        const vistaUsuarios = sessionStorage.getItem("vistaUsuarios") === "true";
+        const editUsuarios = sessionStorage.getItem("editUsuarios") === "true";
+        const editMateriales = sessionStorage.getItem("editMateriales") === "true";
+        const vistaInformes = sessionStorage.getItem("vistaInformes") === "true";
+        const editCategorias = sessionStorage.getItem("editCategorias") === "true";
+      
+        // --- Condición: si CUALQUIERA de estas es true, NO debe renderizar el componente
+        const bloquearComponente =
+          rol === "GLOBAL" ||
+          editPermisos ||
+          vistaUsuarios ||
+          editUsuarios ||
+          editMateriales ||
+          vistaInformes ||
+          editCategorias;
+      
+        // Si está bloqueado, mostramos mensaje simple (no se ejecutan fetchs)
+        if (bloquearComponente) {
+          return (
+            <NavbarL>
+              <div className="empresas-container" style={{ padding: 32 }}>
+                <div style={{
+                  background: "#fff",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 12,
+                  padding: 24,
+                  maxWidth: 680,
+                  margin: "40px auto",
+                  textAlign: "center",
+                  boxShadow: "0 6px 18px rgba(0,0,0,0.06)"
+                }}>
+                  <h2>🚫 Acceso denegado</h2>
+                  <p>No tienes permisos para ver la sección de Perfil de usuario.</p>
+                  <div style={{ marginTop: 16 }}>
+                    <button
+                      onClick={() => navigate("/Dashboard")}
+                      style={{
+                        background: "#f97316",
+                        color: "#fff",
+                        border: "none",
+                        padding: "10px 14px",
+                        borderRadius: 8,
+                        cursor: "pointer",
+                        fontWeight: 600
+                      }}
+                    >
+                      Volver al inicio
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </NavbarL>
+          );
+        }
   const [usuario, setUsuario] = useState({
     id: sessionStorage.getItem("usuario") || null,
     nombre: sessionStorage.getItem("primerNombre") || "",

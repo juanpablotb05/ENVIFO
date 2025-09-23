@@ -1,8 +1,52 @@
 import React, { useState, useRef } from "react";
 import "./AccountSettings.css";
 import { NavbarL } from "../../components/NavbarL";
+import { useNavigate } from "react-router-dom";
 
 const AccountSettings = () => {
+  const navigate = useNavigate();
+  // --- Permisos y rol desde sessionStorage
+  const rol = sessionStorage.getItem("rol") || "";
+
+  // --- Si no cumple condiciones, no renderiza
+    if (!(rol === "GLOBAL")) {
+      return (
+        <NavbarL>
+          <div className="empresas-container" style={{ padding: 32 }}>
+            <div style={{
+              background: "#fff",
+              border: "1px solid #e5e7eb",
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 680,
+              margin: "40px auto",
+              textAlign: "center",
+              boxShadow: "0 6px 18px rgba(0,0,0,0.06)"
+            }}>
+              <h2>🚫 Acceso denegado</h2>
+              <p>No tienes permisos para ver la sección de Perfil de empresa.</p>
+              <div style={{ marginTop: 16 }}>
+                <button
+                  onClick={() => navigate("/Dashboard")}
+                  style={{
+                    background: "#f97316",
+                    color: "#fff",
+                    border: "none",
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    fontWeight: 600
+                  }}
+                >
+                  Volver al inicio
+                </button>
+              </div>
+            </div>
+          </div>
+        </NavbarL>
+      );
+    }
+
   const [usuario, setUsuario] = useState({
     id: sessionStorage.getItem("usuario") || null,
     nombre: sessionStorage.getItem("nombre") || "",
