@@ -1,28 +1,91 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logoPlaceholder from "../../assets/Logo.jpeg"; // Imagen por defecto
 import "./Empresas.css";
 import { NavbarL } from "../../components/NavbarL";
 
 const API_URL = "https://envifo-java-backend-api-rest.onrender.com/api";
 
-//  Cabeceras con token
+//  Cabeceras con token (usar getItem por consistencia)
 const authHeaders = () => ({
   Accept: "application/json",
   "Content-Type": "application/json",
-  Authorization: `Bearer ${sessionStorage.token || ""}`,
+  Authorization: `Bearer ${sessionStorage.getItem("token") || ""}`,
 });
 
 export default function Empresas() {
+  const navigate = useNavigate();
+
+  // --- Leer permisos/rol desde sessionStorage (antes de renderizar o hacer fetch)
+  const rol = sessionStorage.getItem("rol") || "";
+  const editPermisos = sessionStorage.getItem("editPermisos") === "true";
+  const vistaUsuarios = sessionStorage.getItem("vistaUsuarios") === "true";
+  const editUsuarios = sessionStorage.getItem("editUsuarios") === "true";
+  const editMateriales = sessionStorage.getItem("editMateriales") === "true";
+  const vistaInformes = sessionStorage.getItem("vistaInformes") === "true";
+  const editCategorias = sessionStorage.getItem("editCategorias") === "true";
+
+  // --- Condición: si CUALQUIERA de estas es true, NO debe renderizar el componente
+  const bloquearComponente =
+    rol === "GLOBAL" ||
+    editPermisos ||
+    vistaUsuarios ||
+    editUsuarios ||
+    editMateriales ||
+    vistaInformes ||
+    editCategorias;
+
+  // Si está bloqueado, mostramos mensaje simple (no se ejecutan fetchs)
+  if (bloquearComponente) {
+    return (
+      <NavbarL>
+        <div className="empresas-container" style={{ padding: 32 }}>
+          <div style={{
+            background: "#fff",
+            border: "1px solid #e5e7eb",
+            borderRadius: 12,
+            padding: 24,
+            maxWidth: 680,
+            margin: "40px auto",
+            textAlign: "center",
+            boxShadow: "0 6px 18px rgba(0,0,0,0.06)"
+          }}>
+            <h2>🚫 Acceso denegado</h2>
+            <p>No tienes permisos para ver la sección de Empresas.</p>
+            <div style={{ marginTop: 16 }}>
+              <button
+                onClick={() => navigate("/Dashboard")}
+                style={{
+                  background: "#f97316",
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontWeight: 600
+                }}
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </div>
+        </div>
+      </NavbarL>
+    );
+  }
+
+  // --- Si NO está bloqueado, ejecutamos lógica normal
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCompany, setSelectedCompany] = useState(null); // Empresa seleccionada
-  const [imageFile, setImageFile] = useState(null);
+  const [selectedCompany, setSelectedCompany] = useState(null);
 
   //  Cargar todas las empresas
   const fetchCompanies = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/customer/all`, { headers: authHeaders() });
+      const res = await fetch(`${API_URL}/customer/all`, {
+        headers: authHeaders(),
+      });
       if (!res.ok) throw new Error("Error al obtener empresas");
       const data = await res.json();
       setCompanies(data);
@@ -33,69 +96,15 @@ export default function Empresas() {
     }
   };
 
-  //  Cargar empresa con imágenes
+  //  Cargar empresa completa
   const fetchCompanyDetail = async (idCliente) => {
     try {
-      const res = await fetch(`${API_URL}/complete/${idCliente}`, { headers: authHeaders() });
-      if (!res.ok) throw new Error("Error al obtener empresa con imágenes");
+      const res = await fetch(`${API_URL}/customer/complete/${idCliente}`, {
+        headers: authHeaders(),
+      });
+      if (!res.ok) throw new Error("Error al obtener empresa");
       const data = await res.json();
-
-      
       setSelectedCompany(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  //  Eliminar empresa
-  const deleteCompany = async (idCliente) => {
-    if (!window.confirm("¿Seguro que quieres eliminar esta empresa?")) return;
-    try {
-      const res = await fetch(`${API_URL}/${idCliente}`, {
-        method: "DELETE",
-        headers: authHeaders(),
-      });
-      if (!res.ok) throw new Error("Error al eliminar empresa");
-      await fetchCompanies();
-      setSelectedCompany(null);
-      alert("Empresa eliminada ❌");
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  //  Subir imagen
-  const uploadImage = async (idCliente) => {
-    if (!imageFile) return alert("Selecciona una imagen primero");
-    const formData = new FormData();
-    formData.append("file", imageFile);
-
-    try {
-      const res = await fetch(`${API_URL}/save/imagen/${idCliente}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${sessionStorage.token || ""}` },
-        body: formData,
-      });
-      if (!res.ok) throw new Error("Error al subir imagen");
-      await fetchCompanyDetail(idCliente);
-      alert("Imagen subida ✅");
-      setImageFile(null);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  //  Eliminar imagen
-  const deleteImage = async (idImagen, idCliente) => {
-    if (!window.confirm("¿Seguro que quieres eliminar esta imagen?")) return;
-    try {
-      const res = await fetch(`${API_URL}/imagen/${idImagen}`, {
-        method: "DELETE",
-        headers: authHeaders(),
-      });
-      if (!res.ok) throw new Error("Error al eliminar imagen");
-      await fetchCompanyDetail(idCliente);
-      alert("Imagen eliminada ❌");
     } catch (err) {
       console.error(err);
     }
@@ -104,60 +113,91 @@ export default function Empresas() {
   //  Cargar empresas al inicio
   useEffect(() => {
     fetchCompanies();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  if (loading) return <p>Cargando empresas...</p>;
+  if (loading) return (
+    <NavbarL>
+      <div className="empresas-container">
+        <p>Cargando empresas...</p>
+      </div>
+    </NavbarL>
+  );
 
   return (
     <NavbarL>
-    <div className="empresas-container">
-      <h1>Empresas</h1>
+      <div className="empresas-container">
+        {/* Condicional para cambiar título */}
+        <h1>{selectedCompany ? "Empresa" : "Empresas"}</h1>
 
-      {/*  Listado de empresas */}
-      <div className="empresas-grid">
-        {companies.map((c) => (
-          <div key={c.id} className="company-card">
-            <img src={logoPlaceholder} alt="logo" className="company-logo" />
-            <h3>{c.name}</h3>
-            <p>{c.email}</p>
-            <button onClick={() => fetchCompanyDetail(c.id)}>Ver Detalle</button>
-          </div>
-        ))}
-      </div>
-
-      {/*  Detalle empresa seleccionada */}
-      {selectedCompany && (
-        <div className="empresa-detalle">
-          <h2>{selectedCompany.name}</h2>
-          <p>{selectedCompany.address}</p>
-          <p>{selectedCompany.phone}</p>
-          <p>{selectedCompany.email}</p>
-
-          {/* Imagenes */}
-          <h3>Imágenes</h3>
-          <div className="imagenes-grid">
-            {selectedCompany.imagenes && selectedCompany.imagenes.length > 0 ? (
-              selectedCompany.imagenes.map((img) => (
-                <div key={img.id}>
-                  <img src={`data:image/jpeg;base64,${img.data}`} alt="empresa" />
-                  <button onClick={() => deleteImage(img.id, selectedCompany.id)}>Eliminar</button>
+        {/*  Mostrar listado solo si NO hay empresa seleccionada */}
+        {!selectedCompany && (
+          <div className="empresas-grid">
+            {companies.map((c) => (
+              <div key={c.customerId} className="company-card">
+                <img
+                  src={c.images ? c.images.keyR2 : logoPlaceholder}
+                  alt={c.name}
+                  className="company-logo"
+                />
+                <div className="company-body">
+                  <h3>{c.name}</h3>
+                  <p>{c.email}</p>
+                  <button
+                    className="btn-orange"
+                    onClick={() => fetchCompanyDetail(c.customerId)}
+                  >
+                    Ver Detalle
+                  </button>
                 </div>
-              ))
-            ) : (
-              <p>No hay imágenes</p>
-            )}
+              </div>
+            ))}
           </div>
+        )}
 
-          {/* Subir nueva imagen */}
-          <input type="file" onChange={(e) => setImageFile(e.target.files[0])} />
-          <button onClick={() => uploadImage(selectedCompany.id)}>Subir Imagen</button>
+        {/*  Detalle empresa seleccionada */}
+        {selectedCompany && (
+          <div className="empresa-detalle">
+            <h2>{selectedCompany.name}</h2>
+            <p><b>Dirección:</b> {selectedCompany.address}</p>
+            <p><b>Teléfono:</b> {selectedCompany.phone}</p>
+            <p><b>Email:</b> {selectedCompany.email}</p>
+            <p>
+              <b>Web:</b>{" "}
+              {selectedCompany.url ? (
+                <a
+                  href={selectedCompany.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {selectedCompany.url}
+                </a>
+              ) : (
+                "No disponible"
+              )}
+            </p>
+            <p><b>Estado:</b> {selectedCompany.stateCustomer ? "Activo ✅" : "Inactivo ❌"}</p>
 
-          {/* Acciones */}
-          <button onClick={() => deleteCompany(selectedCompany.id)}>Eliminar Empresa</button>
-          <button onClick={() => setSelectedCompany(null)}>Cerrar</button>
-        </div>
-      )}
-    </div>
+            {/* Imagen */}
+            <h3>Imagen</h3>
+            <div className="imagenes-grid">
+              {selectedCompany.images ? (
+                <div key={selectedCompany.images.idFile}>
+                  <img
+                    src={selectedCompany.images.keyR2}
+                    alt={selectedCompany.images.nameFile}
+                  />
+                </div>
+              ) : (
+                <p>No hay imagen</p>
+              )}
+            </div>
+
+            {/* Botón cerrar */}
+            <button className="btn-orange" onClick={() => setSelectedCompany(null)}>Volver</button>
+          </div>
+        )}
+      </div>
     </NavbarL>
   );
 }

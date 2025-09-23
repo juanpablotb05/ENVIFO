@@ -14,80 +14,28 @@ export function NavbarL({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 🔹 Obtener datos de perfil únicamente desde la API (si hay token).
-  // 🔹 Ya no se usa localStorage; solo se utiliza sessionStorage temporal y el endpoint /me.
+  // 🔹 Cargar datos de perfil directamente de sessionStorage
   useEffect(() => {
-    // Valores iniciales desde sessionStorage únicamente
-    const photo = sessionStorage.getItem("profilePhoto") || "";
-    const name = sessionStorage.getItem("nombre") || sessionStorage.getItem("profileName") || "A";
-    const storedPerm = sessionStorage.getItem("permiso") || null;
+    const photo = sessionStorage.getItem("imagen") || "";
+    const name =
+      sessionStorage.getItem("primerNombre") ||
+      sessionStorage.getItem("nombre") ||
+      sessionStorage.getItem("userName") ||
+      "A";
+    const rol = sessionStorage.getItem("rol") || "";
+    const tipo = sessionStorage.getItem("tipo") || "";
 
     setProfilePhoto(photo);
     setProfileName(name);
-    setPermiso(storedPerm);
-
-    const token = sessionStorage.getItem("token") || null;
-    if (!token) return; // sin token no intentamos llamar a la API
-
-    let mounted = true;
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10000);
-
-    // Usar fetch con then/catch para seguir el patrón del login proporcionado
-    const base = "https://envifo-java-backend-api-rest.onrender.com/api";
-
-    fetch(`${base.replace(/\/+$/, "")}/me`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      signal: controller.signal
-    })
-      .then((res) => {
-        clearTimeout(timeout);
-        if (!res.ok) {
-          console.warn('No se pudo obtener perfil desde la API:', res.status);
-          return null;
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (!mounted || !data) return;
-        const permFromApi = data.permiso || data.role || data.roles || data.idPermiso || data.permission || data.permissionLevel || null;
-        const nombreFromApi = data.name || data.nombre || data.firstName || data.username || data.email || null;
-        const photoFromApi = data.photo || data.profilePhoto || data.avatar || null;
-
-        if (permFromApi) {
-          setPermiso(permFromApi);
-          try { sessionStorage.setItem('permiso', permFromApi); } catch (e) {}
-        }
-        if (nombreFromApi) {
-          setProfileName(nombreFromApi);
-          try { sessionStorage.setItem('nombre', nombreFromApi); } catch (e) {}
-        }
-        if (photoFromApi) {
-          setProfilePhoto(photoFromApi);
-          try { sessionStorage.setItem('profilePhoto', photoFromApi); } catch (e) {}
-        }
-      })
-      .catch((err) => {
-        if (err.name === 'AbortError') console.warn('Solicitud para obtener perfil abortada');
-        else console.warn('Error al obtener perfil desde API:', err);
-      });
-
-    return () => {
-      mounted = false;
-      controller.abort();
-      clearTimeout(timeout);
-    };
+    setPermiso(rol || tipo);
   }, []);
 
   // 🔹 Cierra menú de perfil si clic afuera
   useEffect(() => {
     const onClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false);
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
     };
     document.addEventListener("click", onClick);
     return () => document.removeEventListener("click", onClick);
@@ -154,12 +102,17 @@ export function NavbarL({ children }) {
               aria-label="Abrir menú de perfil"
             >
               {profilePhoto ? (
-                <img src={profilePhoto} alt={profileName} className="profile-img" />
+                <img
+                  src={profilePhoto}
+                  alt={profileName}
+                  className="profile-img"
+                />
               ) : (
                 <div className="profile-placeholder">
                   {profileName ? profileName.charAt(0).toUpperCase() : "A"}
                 </div>
               )}
+              <span className="profile-label">{profileName}</span>
             </button>
 
             {menuOpen && (
@@ -176,6 +129,8 @@ export function NavbarL({ children }) {
                 <button
                   onClick={() => {
                     sessionStorage.clear();
+                    localStorage.clear();
+                    console.clear();
                     setMenuOpen(false);
                     navigate("/");
                   }}
@@ -198,22 +153,53 @@ export function NavbarL({ children }) {
           </button>
         </div>
         <div className="side">
-          <Link to="/Dashboard" onClick={() => setIsMenuOpen(false)}>📊 Dashboard</Link>
-          <Link to="/Simulator" onClick={() => setIsMenuOpen(false)}>🖥️ Simulador 3D</Link>
-          {/* Mostrar enlace 'Usuarios' (visible para todos) */}
-          <Link to="/Users" onClick={() => setIsMenuOpen(false)}>👥 Usuarios</Link>
-          <Link to="/Empresas" onClick={() => setIsMenuOpen(false)}>🏢 Empresas</Link>
-          <a href="#projects" onClick={() => setVista("proyectos")}>🗂️ Proyectos</a>
-          <Link to="/Materiales" onClick={() => setIsMenuOpen(false)}>📋 Materiales</Link>
-          <Link to="/Texturas" onClick={() => setIsMenuOpen(false)}>🧩 Texturas</Link>
-          <Link to="/Categories" onClick={() => setIsMenuOpen(false)}>📂 Categorías</Link>
-          <Link to="/Notes" onClick={() => setIsMenuOpen(false)}>📝 Notas</Link>
-          
+          <Link to="/Dashboard" onClick={() => setIsMenuOpen(false)}>
+            📊 Dashboard
+          </Link>
+          <Link to="/Simulator" onClick={() => setIsMenuOpen(false)}>
+            🖥️ Simulador 3D
+          </Link>
+          {permiso === "GLOBAL" && (
+            <Link to="/Users" onClick={() => setIsMenuOpen(false)}>
+              👥 Usuarios
+            </Link>
+          )}
+
+          {permiso !== "GLOBAL" && (
+            <Link to="/Empresas" onClick={() => setIsMenuOpen(false)}>
+              🏢 Empresas
+            </Link>
+          )}
+
+          <a href="#projects" onClick={() => setVista("proyectos")}>
+            🗂️ Proyectos
+          </a>
+          {permiso === "GLOBAL" ||
+          sessionStorage.getItem("editMateriales") === "true" ? (
+            <Link to="/Inventory" onClick={() => setIsMenuOpen(false)}>
+              📋 Inventario
+            </Link>
+          ) : (
+            <Link to="/Materiales" onClick={() => setIsMenuOpen(false)}>
+              📋 Materiales
+            </Link>
+          )}
+
+          {permiso === "GLOBAL" && (
+            <Link to="/Categories" onClick={() => setIsMenuOpen(false)}>
+              📂 Categorías
+            </Link>
+          )}
+          <Link to="/Notes" onClick={() => setIsMenuOpen(false)}>
+            📝 Notas
+          </Link>
         </div>
       </div>
 
       {/* Overlay */}
-      {isMenuOpen && <div className="menu-overlay" onClick={() => setIsMenuOpen(false)} />}
+      {isMenuOpen && (
+        <div className="menu-overlay" onClick={() => setIsMenuOpen(false)} />
+      )}
 
       {/* CONTENIDO PRINCIPAL */}
       <main className="main-content">{children}</main>

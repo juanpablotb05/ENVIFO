@@ -10,29 +10,47 @@ function readNotes() {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
-  } catch { return []; }
+  } catch {
+    return [];
+  }
 }
 
 function writeNotes(list) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); } catch {}
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+  } catch {}
 }
 
 export default function QuickNotes() {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
   const [count, setCount] = useState(0);
+
+  // Inicializamos directamente desde sessionStorage
+  const [isLogged, setIsLogged] = useState(false);
+
+useEffect(() => {
+  const token = sessionStorage.getItem('token');
+  setIsLogged(!!token);
+}, []);
+
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    setCount(readNotes().length);
-  }, [open]);
+    if (isLogged) {
+      setCount(readNotes().length);
+    }
+  }, [open, isLogged]);
 
   const addNote = () => {
     const body = text.trim();
     if (!body) return;
     const list = readNotes();
     const note = {
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2,8),
+      id:
+        Date.now().toString(36) +
+        Math.random().toString(36).slice(2, 8),
       body,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -43,6 +61,9 @@ export default function QuickNotes() {
     setCount(list.length);
   };
 
+  // 🚫 Si no hay token -> no renderiza nada
+  if (!isLogged) return null;
+
   return (
     <>
       <button
@@ -50,7 +71,12 @@ export default function QuickNotes() {
         aria-label="Agregar nota rápida"
         onClick={() => setOpen(!open)}
       >
-        📝{count > 0 ? <span className="fqn-badge" aria-label={`${count} notas`}>{count}</span> : null}
+        📝
+        {count > 0 ? (
+          <span className="fqn-badge" aria-label={`${count} notas`}>
+            {count}
+          </span>
+        ) : null}
       </button>
 
       {open && (
@@ -59,14 +85,33 @@ export default function QuickNotes() {
             <div className="fqn-card-header">Nota rápida</div>
             <textarea
               value={text}
-              onChange={(e)=>setText(e.target.value)}
+              onChange={(e) => setText(e.target.value)}
               placeholder="Escribe una nota..."
               rows={4}
             />
             <div className="fqn-actions">
-              <button className="fqn-btn" onClick={addNote} disabled={!text.trim()}>Guardar</button>
-              <button className="fqn-btn" onClick={() => { setOpen(false); navigate('/Notes'); }}>Ver notas</button>
-              <button className="fqn-btn ghost" onClick={() => setOpen(false)}>Cerrar</button>
+              <button
+                className="fqn-btn"
+                onClick={addNote}
+                disabled={!text.trim()}
+              >
+                Guardar
+              </button>
+              <button
+                className="fqn-btn"
+                onClick={() => {
+                  setOpen(false);
+                  navigate('/Notes');
+                }}
+              >
+                Ver notas
+              </button>
+              <button
+                className="fqn-btn ghost"
+                onClick={() => setOpen(false)}
+              >
+                Cerrar
+              </button>
             </div>
           </div>
         </div>

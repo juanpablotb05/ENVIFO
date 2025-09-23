@@ -11,7 +11,8 @@ import RestablecerPassword from "./pages/RestablecerPassword/RestablecerPassword
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Simulator from "./pages/Simulator/Simulator";
 import Users from "./pages/Users/Users";
-import Materiales from "./pages/Materiales/Materiales";
+import Inventory from "./pages/Materiales/Inventory.jsx";
+import Materiales from "./pages/Materiales/Materiales.jsx";
 import Empresas from "./pages/Empresas/Empresas";
 import Categorias from "./pages/Categorias/Categorias";
 import Notes from "./pages/Notes/Notes";
@@ -35,6 +36,7 @@ function Layout() {
     "/Simulator",
     "/AccountSettings",
     "/Users",
+    "/Inventory",
     "/Materiales",
     "/Empresas",
     "/Categories",
@@ -68,6 +70,7 @@ function Layout() {
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Simulator" element={<Simulator />} />
           <Route path="/Users" element={<Users />} />
+          <Route path="/Inventory" element={<Inventory />} />
           <Route path="/Materiales" element={<Materiales />} />
           <Route path="/Empresas" element={<Empresas />} />
           <Route path="/Categories" element={<Categorias />} />

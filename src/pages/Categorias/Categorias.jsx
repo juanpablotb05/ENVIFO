@@ -1,14 +1,63 @@
 import React, { useState, useEffect } from "react";
 import { NavbarL } from "../../components/NavbarL";
 import "./Categorias.css";
+import { useNavigate } from "react-router-dom";
 
 export default function Categories() {
+  const navigate = useNavigate();
+  const rol = sessionStorage.getItem("rol") || "";
+  const editCategorias = sessionStorage.getItem("editCategorias") === "true";
+
+  // Si no cumple condiciones, no renderiza
+  if (!(rol === "GLOBAL" || editCategorias)) {
+    return (
+      <NavbarL>
+        <div className="empresas-container" style={{ padding: 32 }}>
+          <div
+            style={{
+              background: "#fff",
+              border: "1px solid #e5e7eb",
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 680,
+              margin: "40px auto",
+              textAlign: "center",
+              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+            }}
+          >
+            <h2>🚫 Acceso denegado</h2>
+            <p>No tienes permisos para ver la sección de Inventario.</p>
+            <div style={{ marginTop: 16 }}>
+              <button
+                onClick={() => navigate("/Dashboard")}
+                style={{
+                  background: "#f97316",
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </div>
+        </div>
+      </NavbarL>
+    );
+  }
+
   const [name, setName] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-  
-
+  const [activeTab, setActiveTab] = useState("mias"); // siempre inicia en Mis categorías
+  const [loading, setLoading] = useState(false);
+  const [list, setList] = useState([]);
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState("");
 
   const genSlug = (v) =>
     v.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -20,7 +69,6 @@ export default function Categories() {
     setError("");
   };
 
-  // Crear categoría
   const handleSubmit = (e) => {
     e.preventDefault();
     setSuccess("");
@@ -37,25 +85,27 @@ export default function Categories() {
       return;
     }
 
-    const idCustomer = sessionStorage.getItem("usuario"); //  lo sacamos del login
+    const idCustomer = sessionStorage.getItem("usuario");
 
     setSubmitting(true);
 
-    fetch("https://envifo-java-backend-api-rest.onrender.com/api/categories/save", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-       body: JSON.stringify({
-      nombre: nombre,
-      section: "materiales",
-      estado: true ,
-      idCliente: idCustomer //  agregado para que tu backend lo reciba
-    }),
-
-    })
+    fetch(
+      "https://envifo-java-backend-api-rest.onrender.com/api/categories/save",
+      {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          nombre: nombre,
+          section: "materiales",
+          estado: true,
+          idCliente: idCustomer,
+        }),
+      }
+    )
       .then((res) => {
         if (!res.ok) throw new Error("Error al crear categoría");
         return res.json();
@@ -63,10 +113,8 @@ export default function Categories() {
       .then(() => {
         setSuccess("Categoría creada con éxito ✅");
         setName("");
-        load("todas");
-        
+        load("mias");
       })
-      
       .catch((err) => {
         console.error("Error creando categoría:", err);
         setError("No se pudo crear la categoría");
@@ -74,15 +122,7 @@ export default function Categories() {
       .finally(() => setSubmitting(false));
   };
 
-  // Listados
-  const [activeTab, setActiveTab] = useState("todas");
-  const [loading, setLoading] = useState(false);
-  const [list, setList] = useState([]);
-  const [editingId, setEditingId] = useState(null);
-  const [editingName, setEditingName] = useState("");
-
-  const getId = (c) =>
-    c?.id ?? c?.idCategoria ?? c?.idCategory ?? c?.idCat ?? null;
+  const getId = (c) => c?.id ?? c?.idCategoria ?? c?.idCategory ?? c?.idCat ?? null;
   const getName = (c) => c?.nombre ?? c?.name ?? "";
 
   const load = (tab = activeTab) => {
@@ -91,10 +131,8 @@ export default function Categories() {
     setLoading(true);
     const idCustomer = sessionStorage.getItem("usuario");
 
-    let url = "https://envifo-java-backend-api-rest.onrender.com/api/categories/section/general";
-    if (tab === "mias") {
-      url = `https://envifo-java-backend-api-rest.onrender.com/api/categories/customer/${idCustomer}`;
-    } else if (tab === "globales") {
+    let url = `https://envifo-java-backend-api-rest.onrender.com/api/categories/customer/${idCustomer}`;
+    if (tab === "globales") {
       url = "https://envifo-java-backend-api-rest.onrender.com/api/categories/globals";
     }
 
@@ -107,99 +145,92 @@ export default function Categories() {
     })
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
-        const arr = Array.isArray(data)
-          ? data
-          : data?.items || data?.data || [];
+        const arr = Array.isArray(data) ? data : data?.items || data?.data || [];
         setList(arr || []);
       })
       .catch(() => setList([]))
       .finally(() => setLoading(false));
   };
 
-  // Edición
   const beginEdit = (cat) => {
-  const id = getId(cat);
-  if (id == null) return;
-  setEditingId(id);
-  setEditingName(getName(cat));
-};
+    const id = getId(cat);
+    if (id == null) return;
+    setEditingId(id);
+    setEditingName(getName(cat));
+  };
 
-const cancelEdit = () => {
-  setEditingId(null);
-  setEditingName("");
-};
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditingName("");
+  };
 
-const saveEdit = (id) => {
-  const token = sessionStorage.getItem("token");
-  const idCustomer = sessionStorage.getItem("usuario"); //  lo sacamos del login
-  if (!token || !idCustomer) return;
+  const saveEdit = (id) => {
+    const token = sessionStorage.getItem("token");
+    const idCustomer = sessionStorage.getItem("usuario");
+    if (!token || !idCustomer) return;
 
-  fetch("https://envifo-java-backend-api-rest.onrender.com/api/categories/update", {
-    method: "PUT",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({
-      idCategoria: id,
-      nombre: (editingName || "").trim(),
-      section: "materiales",
-      estado: true ,
-      idCliente: idCustomer //  agregado para que tu backend lo reciba
-    }),
-  })
-    .then((res) => (res.ok ? res.json() : null))
-    .then(() => {
-      setList((prev) =>
-        prev.map((c) =>
-          getId(c) === id ? { ...c, nombre: editingName } : c
-        )
+    fetch("https://envifo-java-backend-api-rest.onrender.com/api/categories/update", {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        idCategoria: id,
+        nombre: (editingName || "").trim(),
+        section: "materiales",
+        estado: true,
+        idCliente: idCustomer,
+      }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then(() => {
+        setList((prev) =>
+          prev.map((c) => (getId(c) === id ? { ...c, nombre: editingName } : c))
+        );
+        cancelEdit();
+      })
+      .catch((err) => console.error("Error editando categoría:", err));
+  };
+
+  const removeCat = (id) => {
+    if (!confirm("¿Eliminar categoría?")) return;
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      console.error(
+        "❌ Error: No hay token de autenticación. Por favor inicia sesión."
       );
-      cancelEdit();
-    })
-    .catch((err) => console.error("Error editando categoría:", err));
-};
+      return;
+    }
 
-
-  // Eliminar
- const removeCat = (id) => {
-  if (!confirm("¿Eliminar categoría?")) return;
-  const token = sessionStorage.getItem("token");
-  if (!token) {
-    console.error("❌ Error: No hay token de autenticación. Por favor inicia sesión.");
-    return;
-  }
-
-  fetch(`https://envifo-java-backend-api-rest.onrender.com/api/categories/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => {
-      // Si la respuesta no es exitosa (ej. 404, 500), lanzamos un error
-      if (!res.ok) {
-        if (res.status === 500) {
-          // Si el error es 500, lanzamos un mensaje específico
-          alert("❌ No se puede eliminar una categoria con materiales.");
-        }
-        // Para otros errores, lanzamos un mensaje genérico
-        throw new Error("No se pudo eliminar la categoría. Respuesta del servidor no exitosa.");
+    fetch(
+      `https://envifo-java-backend-api-rest.onrender.com/api/categories/${id}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
       }
-      return res;
-    })
-    .then(() => {
-      // Este bloque solo se ejecuta si la respuesta fue exitosa
-      setList((prev) => prev.filter((c) => getId(c) !== id));
-      alert("✅ Categoría eliminada con éxito.");
-    })
-    .catch((err) => {
-      // El catch ahora maneja todos los errores, tanto de red como los lanzados por el .then()
-      console.error("Error eliminando categoría:", err.message);
-    });
-};
+    )
+      .then((res) => {
+        if (!res.ok) {
+          if (res.status === 500) {
+            alert("❌ No se puede eliminar una categoria con materiales.");
+          }
+          throw new Error("No se pudo eliminar la categoría.");
+        }
+        return res;
+      })
+      .then(() => {
+        setList((prev) => prev.filter((c) => getId(c) !== id));
+        alert("✅ Categoría eliminada con éxito.");
+      })
+      .catch((err) => {
+        console.error("Error eliminando categoría:", err.message);
+      });
+  };
 
   useEffect(() => {
-    load("todas");
+    load("mias");
   }, []);
   useEffect(() => {
     load(activeTab);
@@ -210,9 +241,7 @@ const saveEdit = (id) => {
       <div className="categories-container">
         <header className="categories-header">
           <h1>📂 Crear categoría</h1>
-          <p className="muted">
-            Escribe el nombre. Te mostraremos un slug sugerido.
-          </p>
+          <p className="muted">Escribe el nombre. Te mostraremos un slug sugerido.</p>
         </header>
 
         <main className="categories-main">
@@ -239,7 +268,9 @@ const saveEdit = (id) => {
               />
               <div className="input-help">
                 {name ? (
-                  <>Se creará como: <code>/{slugPreview}</code></>
+                  <>
+                    Se creará como: <code>/{slugPreview}</code>
+                  </>
                 ) : (
                   "Ejemplo: Materiales"
                 )}
@@ -265,14 +296,7 @@ const saveEdit = (id) => {
             </div>
           </form>
 
-          {/* Tabs */}
           <div className="tabs">
-            <button
-              className={`tab ${activeTab === "todas" ? "active" : ""}`}
-              onClick={() => setActiveTab("todas")}
-            >
-              Categorías existentes
-            </button>
             <button
               className={`tab ${activeTab === "mias" ? "active" : ""}`}
               onClick={() => setActiveTab("mias")}
@@ -287,7 +311,6 @@ const saveEdit = (id) => {
             </button>
           </div>
 
-          {/* Listado */}
           <div className="category-list" aria-busy={loading}>
             <table>
               <thead>
@@ -328,10 +351,7 @@ const saveEdit = (id) => {
                                 >
                                   Guardar
                                 </button>
-                                <button
-                                  className="action"
-                                  onClick={cancelEdit}
-                                >
+                                <button className="action" onClick={cancelEdit}>
                                   Cancelar
                                 </button>
                               </>
