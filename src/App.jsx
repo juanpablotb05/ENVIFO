@@ -1,12 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import { NavbarL } from "./components/NavbarL.jsx";// Importar NavbarL correctamente
+import QuickNotes from "./components/QuickNotes.jsx";
+
 import Inicio from "./pages/Home/Home";
 import Contact from "./pages/Contact/Contact";
 import Login from "./pages/Login/Login";
 import ForgotPassword from "./pages/ForgotPassword/ForgotPassword";
 import PasswordRecovery from "./pages/PasswordRecovery/PasswordRecovery";
 import AccountSettings from "./pages/AccountSettings/AccountSettings";
+import AccountSettingsUsers from "./pages/AccountSettings/AccountSettingsUsers"; // Asegúrate de que la ruta sea correcta
 import RestablecerPassword from "./pages/RestablecerPassword/RestablecerPassword";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Simulator from "./pages/Simulator/Simulator";
@@ -17,55 +21,52 @@ import Empresas from "./pages/Empresas/Empresas";
 import Categorias from "./pages/Categorias/Categorias";
 import Notes from "./pages/Notes/Notes";
 import Texturas from "./pages/Texturas/Texturas";
-import QuickNotes from "./components/QuickNotes.jsx";
 
 function Layout() {
   const location = useLocation();
+  const [introPlaying, setIntroPlaying] = useState(false); // estado para el video
 
-  // Rutas donde el contenido debe estar centrado
-  const centeredRoutes = ["/", "/Contact", "/UserProfile"];
-  // Rutas que usan el estilo especial de login
-  const loginRoutes = ["/Login.jsx"];
-  // Rutas sin Navbar
+  // 🔹 Estado global de perfil para NavbarL
+  const [profilePhoto, setProfilePhoto] = useState(sessionStorage.getItem("imagen") || "");
+  const [profileName, setProfileName] = useState(sessionStorage.getItem("nombre") || "A");
+
   const noNavbarRoutes = [
     "/Login",
     "/password-recovery",
     "/forgot-password",
-    "/RestablecerPassword",
-    "/Dashboard",
-    "/Simulator",
-    "/AccountSettings",
-    "/Users",
-    "/Inventory",
-    "/Materiales",
-    "/Empresas",
-    "/Categories",
-    "/Notes",
-    "/Texturas",
   ];
 
-  const isLoginPage = loginRoutes.includes(location.pathname);
-  const showNavbar = !noNavbarRoutes.includes(location.pathname);
-
-  // Clase principal del main
-  const mainClass = isLoginPage
-    ? "login-main"
-    : centeredRoutes.includes(location.pathname)
-    ? "main-centered"
-    : "";
+  const showNavbar = !noNavbarRoutes.includes(location.pathname) && !introPlaying;
 
   return (
-    <div className="app-container">
-      {showNavbar && <Navbar />}
+    <div className="app-container"> 
+    {showNavbar && <Navbar />}
       <QuickNotes />
-      <main className={mainClass}>
+      <main>
         <Routes>
-          <Route path="/" element={<Inicio />} />
+          <Route path="/" element={<Inicio onIntroPlaying={setIntroPlaying} />} />
           <Route path="/Contact" element={<Contact />} />
           <Route path="/Login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/password-recovery" element={<PasswordRecovery />} />
-          <Route path="/AccountSettings" element={<AccountSettings />} />
+          <Route
+            path="/AccountSettings"
+            element={
+              <AccountSettings
+                setProfilePhoto={setProfilePhoto}
+                setProfileName={setProfileName}
+              />
+            }
+          />
+          <Route
+            path="/AccountSettingsUsers"
+            element={
+              <AccountSettingsUsers
+                setProfilePhoto={setProfilePhoto}
+                setProfileName={setProfileName}
+              />
+            }
+          />
           <Route path="/RestablecerPassword" element={<RestablecerPassword />} />
           <Route path="/Dashboard" element={<Dashboard />} />
           <Route path="/Simulator" element={<Simulator />} />
@@ -91,4 +92,3 @@ function App() {
 }
 
 export default App;
-

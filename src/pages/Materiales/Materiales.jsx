@@ -140,7 +140,7 @@ export default function Materiales() {
               {selectedMaterial.status ? "Disponible ✅" : "No disponible ❌"}
             </p>
             <p>
-              <b>Categoría:</b> {selectedMaterial.idCategoria}
+              <b>Categoría:</b> {selectedMaterial.nameCategory}
             </p>
 
             <h3>Imagen</h3>

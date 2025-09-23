@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./NavbarL.css";
 
-export function NavbarL({ children }) {
+export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
   const [profilePhoto, setProfilePhoto] = useState("");
   const [profileName, setProfileName] = useState("A");
   const [permiso, setPermiso] = useState(null);
@@ -14,10 +14,11 @@ export function NavbarL({ children }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 🔹 Cargar datos de perfil directamente de sessionStorage
+  // 🔹 Cargar datos de perfil directamente de sessionStorage o props
   useEffect(() => {
-    const photo = sessionStorage.getItem("imagen") || "";
+    const photo = profilePhotoProp || sessionStorage.getItem("imagen") || "";
     const name =
+      profileNameProp ||
       sessionStorage.getItem("primerNombre") ||
       sessionStorage.getItem("nombre") ||
       sessionStorage.getItem("userName") ||
@@ -28,7 +29,7 @@ export function NavbarL({ children }) {
     setProfilePhoto(photo);
     setProfileName(name);
     setPermiso(rol || tipo);
-  }, []);
+  }, [profilePhotoProp, profileNameProp]);
 
   // 🔹 Cierra menú de perfil si clic afuera
   useEffect(() => {
@@ -120,12 +121,18 @@ export function NavbarL({ children }) {
                 <button
                   onClick={() => {
                     setMenuOpen(false);
-                    navigate("/AccountSettings");
+                    const rol = sessionStorage.getItem("rol") || "";
+                    if (rol === "GLOBAL") {
+                      navigate("/AccountSettings");
+                    } else {
+                      navigate("/AccountSettingsUsers");
+                    }
                   }}
                   className="profile-menu-item"
                 >
                   ✏️ Editar perfil
                 </button>
+
                 <button
                   onClick={() => {
                     sessionStorage.clear();
