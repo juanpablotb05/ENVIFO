@@ -18,10 +18,7 @@ export default function Materiales() {
   // Leer permisos
   const vistaMateriales = sessionStorage.getItem("vistaMateriales") === "true";
 
-  // Condición: se muestra el componente solo si vistaMateriales = true
-  const puedeVer = vistaMateriales;
-
-  if (!puedeVer) {
+  if (!vistaMateriales) {
     return (
       <NavbarL>
         <div className="materiales-container" style={{ padding: 32 }}>
@@ -62,20 +59,46 @@ export default function Materiales() {
   }
 
   // Estados
-  const [materials, setMaterials] = useState([]);
+  const [globalMaterials, setGlobalMaterials] = useState([]);
+  const [companyMaterials, setCompanyMaterials] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [tab, setTab] = useState("global"); // pestañas: "global" o "empresa"
+
+  // Obtener id de la empresa seleccionada en localStorage
+  const selectedCompany = localStorage.getItem("selectedCompany");
+  let idCliente = null;
+  try {
+    idCliente = selectedCompany ? JSON.parse(selectedCompany) : null;
+  } catch {
+    idCliente = selectedCompany || null;
+  }
 
   // Cargar materiales
   const fetchMaterials = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_URL}/materials/global`, {
+      // Globales
+      const resGlobal = await fetch(`${API_URL}/materials/global`, {
         headers: authHeaders(),
       });
-      if (!res.ok) throw new Error("Error al obtener materiales");
-      const data = await res.json();
-      setMaterials(data);
+      if (!resGlobal.ok) throw new Error("Error al obtener materiales globales");
+      const dataGlobal = await resGlobal.json();
+      setGlobalMaterials(dataGlobal);
+
+      // Empresa
+      if (idCliente) {
+        const resCompany = await fetch(
+          `${API_URL}/materials/client/${idCliente}`,
+          {
+            headers: authHeaders(),
+          }
+        );
+        if (!resCompany.ok)
+          throw new Error("Error al obtener materiales de la empresa");
+        const dataCompany = await resCompany.json();
+        setCompanyMaterials(dataCompany);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -101,10 +124,30 @@ export default function Materiales() {
       <div className="materiales-container">
         <h1>{selectedMaterial ? "Material" : "Materiales"}</h1>
 
+        {/* Tabs para cambiar entre globales y empresa */}
+        {!selectedMaterial && (
+          <div className="tabs">
+            <button
+              className={tab === "global" ? "tab active" : "tab"}
+              onClick={() => setTab("global")}
+            >
+              🌍 Globales
+            </button>
+            {idCliente && (
+              <button
+                className={tab === "empresa" ? "tab active" : "tab"}
+                onClick={() => setTab("empresa")}
+              >
+                🏢 De la Empresa
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Listado de materiales */}
         {!selectedMaterial && (
           <div className="materiales-grid">
-            {materials.map((m) => (
+            {(tab === "global" ? globalMaterials : companyMaterials).map((m) => (
               <div key={m.idMaterial} className="material-card">
                 <img
                   src={m.material?.keyR2 || ""}

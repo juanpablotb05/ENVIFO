@@ -124,6 +124,13 @@ export default function Empresas() {
     </NavbarL>
   );
 
+  //  Función para seleccionar empresa y guardar en LocalStorage
+  const selectCompany = (idCliente) => {
+    localStorage.setItem("selectedCompany", idCliente);
+    //  Redirigir a Dashboard o a la página que corresponda
+    navigate("/Dashboard");
+  };
+
   return (
     <NavbarL>
       <div className="empresas-container">
@@ -195,6 +202,8 @@ export default function Empresas() {
 
             {/* Botón cerrar */}
             <button className="btn-orange" onClick={() => setSelectedCompany(null)}>Volver</button>
+            {/* Botón seleccionar empresa */}
+            <button className="btn-orange" onClick={() => selectCompany(selectedCompany.customerId)}>Seleccionar</button>
           </div>
         )}
       </div>

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import './QuickNotes.css';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import "./QuickNotes.css";
+import { useNavigate } from "react-router-dom";
 
-const STORAGE_KEY = 'quick_notes';
+const STORAGE_KEY = "quick_notes";
 
 function readNotes() {
   try {
@@ -22,20 +22,17 @@ function writeNotes(list) {
 }
 
 export default function QuickNotes() {
+  const [isLogged, setIsLogged] = useState(false);
   const [open, setOpen] = useState(false);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [count, setCount] = useState(0);
 
-  // Inicializamos directamente desde sessionStorage
-  const [isLogged, setIsLogged] = useState(false);
-
-useEffect(() => {
-  const token = sessionStorage.getItem('token');
-  setIsLogged(!!token);
-}, []);
-
-
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("token");
+    setIsLogged(!!token);
+  }, []);
 
   useEffect(() => {
     if (isLogged) {
@@ -43,26 +40,25 @@ useEffect(() => {
     }
   }, [open, isLogged]);
 
+  // 🚫 Si no hay token -> no renderiza nada
+  if (!isLogged) return null;
+
+  
   const addNote = () => {
     const body = text.trim();
     if (!body) return;
     const list = readNotes();
     const note = {
-      id:
-        Date.now().toString(36) +
-        Math.random().toString(36).slice(2, 8),
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
       body,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
     list.unshift(note);
     writeNotes(list);
-    setText('');
+    setText("");
     setCount(list.length);
   };
-
-  // 🚫 Si no hay token -> no renderiza nada
-  if (!isLogged) return null;
 
   return (
     <>
@@ -101,15 +97,12 @@ useEffect(() => {
                 className="fqn-btn"
                 onClick={() => {
                   setOpen(false);
-                  navigate('/Notes');
+                  navigate("/Notes");
                 }}
               >
                 Ver notas
               </button>
-              <button
-                className="fqn-btn ghost"
-                onClick={() => setOpen(false)}
-              >
+              <button className="fqn-btn ghost" onClick={() => setOpen(false)}>
                 Cerrar
               </button>
             </div>
