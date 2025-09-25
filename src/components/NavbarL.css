@@ -16,7 +16,7 @@
 .navbar-container {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0;
   padding: 0 20px;
   display: flex;
   align-items: center;
@@ -52,7 +52,12 @@
   background: none;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse; 
+  gap: 8px;
 }
+
 .profile-img {
   width: 35px;
   height: 35px;
@@ -81,6 +86,13 @@
   padding: 6px 0;
 }
 
+.profile-label {
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+  
 .profile-menu-item {
   display: flex;                /* 🔹 ícono + texto en línea */
   align-items: center;
@@ -125,13 +137,14 @@
 .side {
   display: flex;
   flex-direction: column;
-  padding: 10px;
+  padding: 2px;
 }
 .side a {
-  padding: 10px;
+  padding: 2px;
   text-decoration: none;
   color: #333;
-  border-radius: 4px;
+  border-radius: 2px;
+  margin: 5px 0;
 }
 .side a:hover {
   background: #f5f5f5;

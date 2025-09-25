@@ -3,66 +3,86 @@ import "./AccountSettings.css";
 import { NavbarL } from "../../components/NavbarL";
 import { useNavigate } from "react-router-dom";
 
-const AccountSettings = () => {
-  const navigate = useNavigate();
-  // --- Permisos y rol desde sessionStorage
-  const rol = sessionStorage.getItem("rol") || "";
+const AccountSettingsUsers = () => {
+      const navigate = useNavigate();
 
-  // --- Si no cumple condiciones, no renderiza
-    if (!(rol === "GLOBAL")) {
-      return (
-        <NavbarL>
-          <div className="empresas-container" style={{ padding: 32 }}>
-            <div style={{
-              background: "#fff",
-              border: "1px solid #e5e7eb",
-              borderRadius: 12,
-              padding: 24,
-              maxWidth: 680,
-              margin: "40px auto",
-              textAlign: "center",
-              boxShadow: "0 6px 18px rgba(0,0,0,0.06)"
-            }}>
-              <h2>🚫 Acceso denegado</h2>
-              <p>No tienes permisos para ver la sección de Perfil de empresa.</p>
-              <div style={{ marginTop: 16 }}>
-                <button
-                  onClick={() => navigate("/Dashboard")}
-                  style={{
-                    background: "#f97316",
-                    color: "#fff",
-                    border: "none",
-                    padding: "10px 14px",
-                    borderRadius: 8,
-                    cursor: "pointer",
-                    fontWeight: 600
-                  }}
-                >
-                  Volver al inicio
-                </button>
+      // --- Leer permisos/rol desde sessionStorage (antes de renderizar o hacer fetch)
+        const rol = sessionStorage.getItem("rol") || "";
+        const editPermisos = sessionStorage.getItem("editPermisos") === "true";
+        const vistaUsuarios = sessionStorage.getItem("vistaUsuarios") === "true";
+        const editUsuarios = sessionStorage.getItem("editUsuarios") === "true";
+        const editMateriales = sessionStorage.getItem("editMateriales") === "true";
+        const vistaInformes = sessionStorage.getItem("vistaInformes") === "true";
+        const editCategorias = sessionStorage.getItem("editCategorias") === "true";
+      
+        // --- Condición: si CUALQUIERA de estas es true, NO debe renderizar el componente
+        const bloquearComponente =
+          rol === "GLOBAL" ||
+          editPermisos ||
+          vistaUsuarios ||
+          editUsuarios ||
+          editMateriales ||
+          vistaInformes ||
+          editCategorias;
+      
+        // Si está bloqueado, mostramos mensaje simple (no se ejecutan fetchs)
+        if (bloquearComponente) {
+          return (
+            <NavbarL>
+              <div className="empresas-container" style={{ padding: 32 }}>
+                <div style={{
+                  background: "#fff",
+                  border: "1px solid #e5e7eb",
+                  borderRadius: 12,
+                  padding: 24,
+                  maxWidth: 680,
+                  margin: "40px auto",
+                  textAlign: "center",
+                  boxShadow: "0 6px 18px rgba(0,0,0,0.06)"
+                }}>
+                  <h2>🚫 Acceso denegado</h2>
+                  <p>No tienes permisos para ver la sección de Perfil de usuario.</p>
+                  <div style={{ marginTop: 16 }}>
+                    <button
+                      onClick={() => navigate("/Dashboard")}
+                      style={{
+                        background: "#f97316",
+                        color: "#fff",
+                        border: "none",
+                        padding: "10px 14px",
+                        borderRadius: 8,
+                        cursor: "pointer",
+                        fontWeight: 600
+                      }}
+                    >
+                      Volver al inicio
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </NavbarL>
-      );
-    }
-
+            </NavbarL>
+          );
+        }
   const [usuario, setUsuario] = useState({
     id: sessionStorage.getItem("usuario") || null,
-    nombre: sessionStorage.getItem("nombre") || "",
+    nombre: sessionStorage.getItem("primerNombre") || "",
+    segundoNombre: sessionStorage.getItem("segundoNombre") || "",
+    primerApellido: sessionStorage.getItem("primerApellido") || "",
+    segundoApellido: sessionStorage.getItem("segundoApellido") || "",
     email: sessionStorage.getItem("email") || "",
-    telefono: sessionStorage.getItem("telefono") || "",
-    direccion: sessionStorage.getItem("direccion") || "",
-    url: sessionStorage.getItem("url") || "",
+    telefono: sessionStorage.getItem("celular") || "",
+    edad: sessionStorage.getItem("edad") || "",
     rol: sessionStorage.getItem("rol") || "",
   });
 
   const [formData, setFormData] = useState({
-    nombre: usuario.nombre,
+    primerNombre: usuario.nombre,
+    segundoNombre: usuario.segundoNombre,
+    primerApellido: usuario.primerApellido,
+    segundoApellido: usuario.segundoApellido,
     email: usuario.email,
     telefono: usuario.telefono,
-    direccion: usuario.direccion,
-    url: usuario.url,
+    edad: usuario.edad,
     password: "",
     confirmPassword: "",
   });
@@ -97,20 +117,22 @@ const AccountSettings = () => {
       return;
     }
 
-    const idCliente = usuario.id;
+    const idUsuario = usuario.id;
     const token = sessionStorage.getItem("token");
     const formDataToSend = new FormData();
 
-    const customerData = {
-      name: formData.nombre,
-      address: formData.direccion,
-      phone: formData.telefono,
+    const userData = {
+      firstName: formData.primerNombre,
+      middleName: formData.segundoNombre,
+      firstSurname: formData.primerApellido,
+      secondSurname: formData.segundoApellido,
       email: formData.email,
-      url: formData.url,
+      phone: formData.telefono,
+      age: formData.edad,
       ...(passwordEnabled && formData.password ? { password: formData.password } : {}),
     };
 
-    formDataToSend.append("customer", JSON.stringify(customerData));
+    formDataToSend.append("user", JSON.stringify(userData));
 
     if (selectedFile) {
       formDataToSend.append("file", selectedFile);
@@ -120,7 +142,7 @@ const AccountSettings = () => {
 
     try {
       const response = await fetch(
-        `https://envifo-java-backend-api-rest.onrender.com/api/customer/${idCliente}`,
+        `https://envifo-java-backend-api-rest.onrender.com/api/user/${idUsuario}`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },
@@ -136,18 +158,20 @@ const AccountSettings = () => {
       alert("Datos actualizados correctamente.");
 
       // Actualizar sessionStorage
-      sessionStorage.setItem("nombre", formData.nombre);
+      sessionStorage.setItem("primerNombre", formData.primerNombre);
+      sessionStorage.setItem("segundoNombre", formData.segundoNombre);
+      sessionStorage.setItem("primerApellido", formData.primerApellido);
+      sessionStorage.setItem("segundoApellido", formData.segundoApellido);
       sessionStorage.setItem("email", formData.email);
-      sessionStorage.setItem("telefono", formData.telefono);
-      sessionStorage.setItem("direccion", formData.direccion);
-      sessionStorage.setItem("url", formData.url);
+      sessionStorage.setItem("celular", formData.telefono);
+      sessionStorage.setItem("edad", formData.edad);
 
       if (selectedFile) {
         sessionStorage.setItem("imagen", image);
         setProfilePhoto(image);
       }
 
-      setProfileName(formData.nombre);
+      setProfileName(formData.primerNombre);
       setUsuario((prev) => ({ ...prev, ...formData }));
       setSelectedFile(null);
 
@@ -176,7 +200,7 @@ const AccountSettings = () => {
 
     try {
       const response = await fetch(
-        `https://envifo-java-backend-api-rest.onrender.com/api/customer/imagen/${idImagen}`,
+        `https://envifo-java-backend-api-rest.onrender.com/api/user/imagen/${idImagen}`,
         { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -253,13 +277,43 @@ const AccountSettings = () => {
             }}
           >
             <div className="form-group">
-              <label htmlFor="nombre">Nombre</label>
+              <label htmlFor="primerNombre">Primer nombre</label>
               <input
                 type="text"
-                id="nombre"
-                value={formData.nombre}
+                id="primerNombre"
+                value={formData.primerNombre}
                 onChange={handleChange}
-                placeholder="Ingrese nombre de la empresa"
+                placeholder="Primer nombre"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="segundoNombre">Segundo nombre</label>
+              <input
+                type="text"
+                id="segundoNombre"
+                value={formData.segundoNombre}
+                onChange={handleChange}
+                placeholder="Segundo nombre"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="primerApellido">Primer apellido</label>
+              <input
+                type="text"
+                id="primerApellido"
+                value={formData.primerApellido}
+                onChange={handleChange}
+                placeholder="Primer apellido"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="segundoApellido">Segundo apellido</label>
+              <input
+                type="text"
+                id="segundoApellido"
+                value={formData.segundoApellido}
+                onChange={handleChange}
+                placeholder="Segundo apellido"
               />
             </div>
             <div className="form-group">
@@ -269,37 +323,27 @@ const AccountSettings = () => {
                 id="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="empresa@correo.com"
+                placeholder="Correo electrónico"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="telefono">Teléfono</label>
+              <label htmlFor="telefono">Celular</label>
               <input
                 type="text"
                 id="telefono"
                 value={formData.telefono}
                 onChange={handleChange}
-                placeholder="Teléfono"
+                placeholder="Celular"
               />
             </div>
             <div className="form-group">
-              <label htmlFor="direccion">Dirección</label>
+              <label htmlFor="edad">Edad</label>
               <input
                 type="text"
-                id="direccion"
-                value={formData.direccion}
+                id="edad"
+                value={formData.edad}
                 onChange={handleChange}
-                placeholder="Dirección / Ubicación"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="url">URL</label>
-              <input
-                type="text"
-                id="url"
-                value={formData.url}
-                onChange={handleChange}
-                placeholder="https://..."
+                placeholder="Edad"
               />
             </div>
 
@@ -352,4 +396,4 @@ const AccountSettings = () => {
   );
 };
 
-export default AccountSettings;
+export default AccountSettingsUsers;

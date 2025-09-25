@@ -1,206 +1,211 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Materiales.css";
 import { NavbarL } from "../../components/NavbarL";
 
-const API_BASE = (import.meta.env.VITE_API_BASE || "https://envifo-java-backend-api-rest.onrender.com/api").replace(/\/+$/, "");
+const API_URL = "https://envifo-java-backend-api-rest.onrender.com/api";
 
-const Materiales = () => {
-  // Estados para guardar materiales globales y del cliente
-  const [globales, setGlobales] = useState([]);
-  const [cliente, setCliente] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [subiendo, setSubiendo] = useState(false);
-  const inputRef = useRef(null);
+// Cabeceras con token
+const authHeaders = () => ({
+  Accept: "application/json",
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${sessionStorage.getItem("token") || ""}`,
+});
 
-  const leerToken = () => (typeof window !== 'undefined' ? sessionStorage.getItem("token") : null);
-  const leerIdCliente = () => {
-    if (typeof window === 'undefined') return null;
+export default function Materiales() {
+  const navigate = useNavigate();
+
+  // Leer permisos
+  const vistaMateriales = sessionStorage.getItem("vistaMateriales") === "true";
+
+  if (!vistaMateriales) {
     return (
-      sessionStorage.getItem("idCliente") ||
-      sessionStorage.getItem("cliente") ||
-      sessionStorage.getItem("usuario") ||
-      null
+      <NavbarL>
+        <div className="materiales-container" style={{ padding: 32 }}>
+          <div
+            style={{
+              background: "#fff",
+              border: "1px solid #e5e7eb",
+              borderRadius: 12,
+              padding: 24,
+              maxWidth: 680,
+              margin: "40px auto",
+              textAlign: "center",
+              boxShadow: "0 6px 18px rgba(0,0,0,0.06)",
+            }}
+          >
+            <h2>🚫 Acceso denegado</h2>
+            <p>No tienes permisos para ver la sección de Materiales.</p>
+            <div style={{ marginTop: 16 }}>
+              <button
+                onClick={() => navigate("/Dashboard")}
+                style={{
+                  background: "#f97316",
+                  color: "#fff",
+                  border: "none",
+                  padding: "10px 14px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontWeight: 600,
+                }}
+              >
+                Volver al inicio
+              </button>
+            </div>
+          </div>
+        </div>
+      </NavbarL>
     );
-  };
+  }
 
-  const cargarListas = () => {
-    const token = leerToken();
-    const idCliente = leerIdCliente();
+  // Estados
+  const [globalMaterials, setGlobalMaterials] = useState([]);
+  const [companyMaterials, setCompanyMaterials] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [tab, setTab] = useState("global"); // pestañas: "global" o "empresa"
 
-    if (!token || !idCliente) {
-      console.error("No se encontró token o usuario en sesión");
+  // Obtener id de la empresa seleccionada en localStorage
+  const selectedCompany = localStorage.getItem("selectedCompany");
+  let idCliente = null;
+  try {
+    idCliente = selectedCompany ? JSON.parse(selectedCompany) : null;
+  } catch {
+    idCliente = selectedCompany || null;
+  }
+
+  // Cargar materiales
+  const fetchMaterials = async () => {
+    setLoading(true);
+    try {
+      // Globales
+      const resGlobal = await fetch(`${API_URL}/materials/global`, {
+        headers: authHeaders(),
+      });
+      if (!resGlobal.ok) throw new Error("Error al obtener materiales globales");
+      const dataGlobal = await resGlobal.json();
+      setGlobalMaterials(dataGlobal);
+
+      // Empresa
+      if (idCliente) {
+        const resCompany = await fetch(
+          `${API_URL}/materials/client/${idCliente}`,
+          {
+            headers: authHeaders(),
+          }
+        );
+        if (!resCompany.ok)
+          throw new Error("Error al obtener materiales de la empresa");
+        const dataCompany = await resCompany.json();
+        setCompanyMaterials(dataCompany);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const fetchGlobales = fetch(`${API_BASE}/materials/global`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then((res) => (res.ok ? res.json() : []));
-
-    const fetchCliente = fetch(`${API_BASE}/materials/client/${idCliente}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }).then((res) => (res.ok ? res.json() : []));
-
-    Promise.all([fetchGlobales, fetchCliente])
-      .then(([globalData, clienteData]) => {
-        setGlobales(Array.isArray(globalData) ? globalData : globalData?.items || globalData?.data || []);
-        setCliente(Array.isArray(clienteData) ? clienteData : clienteData?.items || clienteData?.data || []);
-      })
-      .catch((err) => {
-        console.error("Error al cargar materiales:", err);
-      })
-      .finally(() => setLoading(false));
   };
 
   useEffect(() => {
-    cargarListas();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchMaterials();
   }, []);
 
-  const subirMaterial = async (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-
-    const token = leerToken();
-    const idCliente = leerIdCliente();
-    if (!token || !idCliente) {
-      alert("No hay sesión activa");
-      if (inputRef.current) inputRef.current.value = "";
-      return;
-    }
-
-    try {
-      setSubiendo(true);
-      const form = new FormData();
-      form.append("file", file);
-      form.append("nombre", file.name);
-
-      const resp = await fetch(`${API_BASE}/materials/client/${idCliente}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: form,
-      });
-
-      if (!resp.ok) throw new Error(`Error ${resp.status}`);
-      await resp.json().catch(() => null);
-
-      // Recargar lista del cliente tras subir
-      const recarga = await fetch(`${API_BASE}/materials/client/${idCliente}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = recarga.ok ? await recarga.json() : [];
-      const arr = Array.isArray(data) ? data : data?.items || data?.data || [];
-      setCliente(arr || []);
-      alert("Material subido correctamente");
-    } catch (err) {
-      console.error("No se pudo subir el material:", err);
-      alert("No se pudo subir el material");
-    } finally {
-      setSubiendo(false);
-      if (inputRef.current) inputRef.current.value = "";
-    }
-  };
+  if (loading)
+    return (
+      <NavbarL>
+        <div className="materiales-container">
+          <p>Cargando materiales...</p>
+        </div>
+      </NavbarL>
+    );
 
   return (
-    <>
-      <NavbarL />
+    <NavbarL>
       <div className="materiales-container">
-        <div className="hero">
-          <h1>Materiales</h1>
-          <p>Gestiona tus texturas y materiales</p>
-        </div>
+        <h1>{selectedMaterial ? "Material" : "Materiales"}</h1>
 
-        {loading ? (
-          <p>Cargando materiales...</p>
-        ) : (
-          <>
-            {/* Sección de materiales globales */}
-            <div className="card">
-              <div className="card-header">
-                <h2>Materiales globales</h2>
-                <p>Disponibles para todos los clientes</p>
-              </div>
-              <div className="grid-global">
-                {globales.length > 0 ? (
-                  globales.map((mat) => (
-                    <div key={mat.idMaterial || mat.id || mat.uuid} className="texture-item">
-                      <div className="texture-preview">
-                        {mat.previewUrl ? (
-                          <img
-                            src={mat.previewUrl}
-                            alt={mat.nombre || "material"}
-                            style={{ width: "100%", height: "100%" }}
-                          />
-                        ) : (
-                          <div className="empty-state">Sin vista previa</div>
-                        )}
-                      </div>
-                      <div className="texture-name">{mat.nombre || mat.name || "Sin nombre"}</div>
-                    </div>
-                  ))
-                ) : (
-                  <p>No hay materiales globales</p>
-                )}
-              </div>
-            </div>
+        {/* Tabs para cambiar entre globales y empresa */}
+        {!selectedMaterial && (
+          <div className="tabs">
+            <button
+              className={tab === "global" ? "tab active" : "tab"}
+              onClick={() => setTab("global")}
+            >
+              🌍 Globales
+            </button>
+            {idCliente && (
+              <button
+                className={tab === "empresa" ? "tab active" : "tab"}
+                onClick={() => setTab("empresa")}
+              >
+                🏢 De la Empresa
+              </button>
+            )}
+          </div>
+        )}
 
-            {/* Sección de materiales del cliente */}
-            <div className="card">
-              <div className="card-header" style={{ gap: 12, flexWrap: 'wrap' }}>
-                <div>
-                  <h2>Mis materiales</h2>
-                  <p>Texturas que subiste a tu cuenta</p>
-                </div>
-                <div>
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    accept="image/*"
-                    onChange={subirMaterial}
-                    className="hidden-input"
-                  />
+        {/* Listado de materiales */}
+        {!selectedMaterial && (
+          <div className="materiales-grid">
+            {(tab === "global" ? globalMaterials : companyMaterials).map((m) => (
+              <div key={m.idMaterial} className="material-card">
+                <img
+                  src={m.material?.keyR2 || ""}
+                  alt={m.nameMaterial}
+                  className="material-image"
+                />
+                <div className="material-body">
                   <button
-                    className="btn-upload"
-                    onClick={() => inputRef.current && inputRef.current.click()}
-                    disabled={subiendo}
+                    className="btn-orange"
+                    onClick={() => setSelectedMaterial(m)}
                   >
-                    {subiendo ? "Subiendo..." : "Subir material"}
+                    Ver Detalle
                   </button>
                 </div>
               </div>
-              <div className="grid-user">
-                {cliente.length > 0 ? (
-                  cliente.map((mat) => (
-                    <div key={mat.idMaterial || mat.id || mat.uuid} className="user-texture">
-                      <div className="user-texture-preview">
-                        {mat.previewUrl ? (
-                          <img
-                            src={mat.previewUrl}
-                            alt={mat.nombre || "material"}
-                          />
-                        ) : (
-                          <div className="empty-state">Sin vista previa</div>
-                        )}
-                      </div>
-                      <div className="user-texture-footer">
-                        <span>{mat.nombre || mat.name || "Sin nombre"}</span>
-                        <div className="user-actions">
-                          <button className="btn-link">Editar</button>
-                          <button className="btn-danger">Eliminar</button>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p>No has subido materiales aún</p>
-                )}
-              </div>
-            </div>
-          </>
+            ))}
+          </div>
+        )}
+
+        {/* Detalle material */}
+        {selectedMaterial && (
+          <div className="material-detalle">
+            <h2>{selectedMaterial.nameMaterial}</h2>
+            <p>
+              <b>Descripción:</b> {selectedMaterial.descripcionMate}
+            </p>
+            <p>
+              <b>Dimensiones:</b> {selectedMaterial.height} x{" "}
+              {selectedMaterial.width} cm
+            </p>
+            <p>
+              <b>Estado:</b>{" "}
+              {selectedMaterial.status ? "Disponible ✅" : "No disponible ❌"}
+            </p>
+            <p>
+              <b>Categoría:</b> {selectedMaterial.nameCategory}
+            </p>
+
+            <h3>Imagen</h3>
+            {selectedMaterial.material?.keyR2 ? (
+              <img
+                src={selectedMaterial.material.keyR2}
+                alt={selectedMaterial.material.nameFile}
+                className="detalle-imagen"
+              />
+            ) : (
+              <p>No hay imagen disponible</p>
+            )}
+
+            <button
+              className="btn-orange"
+              onClick={() => setSelectedMaterial(null)}
+            >
+              Volver
+            </button>
+          </div>
         )}
       </div>
-    </>
+    </NavbarL>
   );
-};
-
-export default Materiales;
+}
