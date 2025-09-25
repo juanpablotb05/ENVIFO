@@ -19,17 +19,27 @@ const writeNotes = (list) => {
   } catch {}
 };
 
-// Utilidades para mapear respuestas del backend
+// Mapear respuesta del backend a formato local
 const toLocal = (n) => ({
   id: n?.id ?? n?.idGrade ?? n?.idNota,
   title: n?.title ?? n?.titulo ?? '',
   body: n?.body ?? n?.content ?? n?.contenido ?? n?.nota ?? n?.text ?? '',
-  createdAt: n?.createdAt || n?.fecha || new Date().toISOString(),
-  updatedAt: n?.updatedAt || n?.fechaActualizacion || n?.fecha || new Date().toISOString(),
+  createdAt:
+    n?.createdAt ||
+    n?.fechaCreacion ||
+    n?.fecha ||
+    new Date().toISOString(),
+  updatedAt:
+    n?.updatedAt ||
+    n?.updatedDate ||
+    n?.fechaActualizacion ||
+    n?.fecha ||
+    new Date().toISOString(),
 });
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
+  const [allNotes, setAllNotes] = useState([]); // 🔑 todas las notas originales
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [editing, setEditing] = useState(null);
@@ -39,10 +49,16 @@ export default function Notes() {
   const [loading, setLoading] = useState(false);
 
   const token = sessionStorage.getItem('token');
-  const idUsuario = sessionStorage.getItem('idUsuario') || sessionStorage.getItem('usuario');
-  const idCliente = sessionStorage.getItem('idCliente') || sessionStorage.getItem('cliente');
+  const rol = sessionStorage.getItem('rol');
+  const usuario = sessionStorage.getItem('usuario');
 
-  // Lógica de fetch API
+  const isGlobal = rol === 'GLOBAL';
+
+  const sortByUpdated = (list) =>
+    [...list].sort(
+      (a, b) => new Date(b.updatedAt || b.createdAt) - new Date(a.updatedAt || a.createdAt)
+    );
+
   const fetchNotes = async (url) => {
     try {
       setLoading(true);
@@ -53,11 +69,15 @@ export default function Notes() {
       const data = await res.json();
       const arr = Array.isArray(data) ? data : data?.items || data?.data || [];
       const mapped = (arr || []).map(toLocal).filter((n) => n.id && n.body);
-      setNotes(mapped);
-      writeNotes(mapped);
+      const ordered = sortByUpdated(mapped);
+      setNotes(ordered);
+      setAllNotes(ordered); // ✅ guardamos todas
+      writeNotes(ordered);
     } catch (error) {
       console.error('Error fetching notes:', error);
-      setNotes(readNotes());
+      const fallback = sortByUpdated(readNotes());
+      setNotes(fallback);
+      setAllNotes(fallback);
     } finally {
       setLoading(false);
     }
@@ -68,16 +88,26 @@ export default function Notes() {
     const titulo = title.trim();
     if (!body) return;
 
-    // Actualización optimista de la UI
-    const temp = { id: Date.now().toString(36), title: titulo, body, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
-    setNotes((prev) => [temp, ...prev]);
-    writeNotes([temp, ...notes]);
+    const temp = {
+      id: Date.now().toString(36),
+      title: titulo,
+      body,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    const updatedList = sortByUpdated([temp, ...notes]);
+    setNotes(updatedList);
+    setAllNotes(updatedList); // ✅ también en allNotes
+    writeNotes(updatedList);
     setText('');
     setTitle('');
 
     if (!token) return;
 
-    const payload = { title: titulo, content: body, idUsuario, idCliente };
+    const payload = isGlobal
+      ? { title: titulo, content: body, idCustomer: usuario }
+      : { title: titulo, content: body, idUser: usuario };
+
     try {
       const res = await fetch(`${API_BASE}/grades/save`, {
         method: 'POST',
@@ -85,11 +115,9 @@ export default function Notes() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error('Error al guardar la nota.');
-      // Después de guardar, recargamos las notas para obtener la ID real de la API
       reloadNotes();
     } catch (error) {
       console.error('Error saving note:', error);
-      // Opcional: revertir la actualización optimista si falla
     }
   };
 
@@ -98,14 +126,20 @@ export default function Notes() {
     const titulo = editTitle.trim();
     if (!body) return;
 
-    // Actualización optimista
-    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, title: titulo, body, updatedAt: new Date().toISOString() } : n)));
-    writeNotes(notes.map((n) => (n.id === id ? { ...n, title: titulo, body, updatedAt: new Date().toISOString() } : n)));
+    const updatedList = notes.map((n) =>
+      n.id === id ? { ...n, title: titulo, body, updatedAt: new Date().toISOString() } : n
+    );
+    setNotes(sortByUpdated(updatedList));
+    setAllNotes(sortByUpdated(updatedList));
+    writeNotes(sortByUpdated(updatedList));
     cancelEdit();
 
     if (!token) return;
 
-    const payload = { idGrade: id, title: titulo, content: body, idUsuario };
+    const payload = isGlobal
+      ? { idGrade: id, title: titulo, content: body, idCustomer: usuario }
+      : { idGrade: id, title: titulo, content: body, idUser: usuario };
+
     try {
       const res = await fetch(`${API_BASE}/grades/editGrade`, {
         method: 'PUT',
@@ -116,16 +150,15 @@ export default function Notes() {
       reloadNotes();
     } catch (error) {
       console.error('Error editing note:', error);
-      // Opcional: revertir la actualización optimista si falla
     }
   };
 
   const removeNote = async (id) => {
     if (!confirm('¿Eliminar nota?')) return;
-
-    // Actualización optimista
-    setNotes((prev) => prev.filter((n) => n.id !== id));
-    writeNotes(notes.filter((n) => n.id !== id));
+    const updatedList = notes.filter((n) => n.id !== id);
+    setNotes(sortByUpdated(updatedList));
+    setAllNotes(sortByUpdated(updatedList));
+    writeNotes(sortByUpdated(updatedList));
 
     if (!token) return;
 
@@ -138,31 +171,21 @@ export default function Notes() {
       reloadNotes();
     } catch (error) {
       console.error('Error deleting note:', error);
-      // Opcional: revertir la actualización optimista si falla
-    }
-  };
-
-  const searchNotes = async () => {
-    const q = query.trim();
-    if (!q) {
-      reloadNotes();
-      return;
-    }
-
-    if (token && idUsuario) {
-      const url = `${API_BASE}/grades/filter/user/${encodeURIComponent(q)}/${idUsuario}`;
-      fetchNotes(url);
-    } else {
-      setNotes(notes.filter((n) => (n.body || '').toLowerCase().includes(q) || (n.title || '').toLowerCase().includes(q)));
     }
   };
 
   const reloadNotes = () => {
     if (!token) {
-      setNotes(readNotes());
+      const local = sortByUpdated(readNotes());
+      setNotes(local);
+      setAllNotes(local);
       return;
     }
-    const url = idUsuario ? `${API_BASE}/grades/user/${idUsuario}` : `${API_BASE}/grades/all`;
+    const idCliente = usuario;
+    const idUsuario = usuario;
+    const url = isGlobal
+      ? `${API_BASE}/grades/customer/${idCliente}`
+      : `${API_BASE}/grades/user/${idUsuario}`;
     fetchNotes(url);
   };
 
@@ -178,6 +201,24 @@ export default function Notes() {
     setEditTitle('');
   };
 
+  // 🔎 Efecto que escucha query y filtra en vivo
+  useEffect(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      setNotes(allNotes); // si input vacío, mostrar todas
+    } else {
+      setNotes(
+        sortByUpdated(
+          allNotes.filter(
+            (n) =>
+              (n.body || '').toLowerCase().includes(q) ||
+              (n.title || '').toLowerCase().includes(q)
+          )
+        )
+      );
+    }
+  }, [query, allNotes]);
+
   useEffect(() => {
     reloadNotes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -192,7 +233,6 @@ export default function Notes() {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && searchNotes()}
               placeholder="Buscar nota..."
             />
           </div>
