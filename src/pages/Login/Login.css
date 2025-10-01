@@ -290,18 +290,6 @@ footer p {
     margin: 10px 0;
 }
 
-/*
-.body {
-	height: 100vh;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: #f0f0f0; /* Opcional, mejora contraste */
-	/* margin: 0;
-	font-family: 'Montserrat', sans-serif;
-} 
-*/
-
 .radio-section {
   display: flex;
   justify-content: space-between;
@@ -363,8 +351,7 @@ footer p {
 }
 
 .page-wrapper {
+   display: flex;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
 }

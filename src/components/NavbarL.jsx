@@ -55,6 +55,7 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
     else if (path.includes("/maps")) setVista("Maps");
     else if (path.includes("/dashboard")) setVista("dashboard");
     else if (path.includes("/userprofile")) setVista("UserProfile");
+    else if (path.includes("/Inventory")) setVista("Inventory");
     else if (path === "/" || path === "") setVista("home");
     else setVista("dashboard");
   }, [location]);
@@ -73,6 +74,7 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
     if (v === "maps") return "Mapas";
     if (v === "userprofile") return "Perfil de Usuario";
     if (v === "home") return "Inicio";
+    if (v === "Inventory") return "Inventory";
     return "Dashboard";
   };
 

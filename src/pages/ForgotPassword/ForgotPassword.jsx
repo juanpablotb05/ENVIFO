@@ -45,7 +45,7 @@ const forgotAction = () => {
 };
 
   return (
-    <Layout>
+    
     <div className="forgot-password-container">
       <div className="logo-section">
         <img src={logo} alt="Envifo Logo" className="logo" onClick={() => navigate('/')}/>
@@ -79,7 +79,7 @@ const forgotAction = () => {
         </button>
       </div>
     </div>
-    </Layout>
+    
   );
 };
 
