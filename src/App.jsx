@@ -34,6 +34,18 @@ function Layout() {
     "/Login",
     "/password-recovery",
     "/forgot-password",
+    "/RestablecerPassword",
+    "/Dashboard",
+    "/Simulator",
+    "/AccountSettingsUsers",
+    "/AccountSettings",
+    "/Users",
+    "/Materiales",
+    "/Empresas",
+    "/Categories",
+    "/Notes",
+    "/Texturas",
+    "/Inventory",
   ];
 
   const showNavbar = !noNavbarRoutes.includes(location.pathname) && !introPlaying;
