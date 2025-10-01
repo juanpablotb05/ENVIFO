@@ -14,7 +14,7 @@ import AccountSettingsUsers from "./pages/AccountSettings/AccountSettingsUsers";
 import RestablecerPassword from "./pages/RestablecerPassword/RestablecerPassword";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Simulator from "./pages/Simulator/Simulator";
-import Users from "./pages/Users/Users";
+import Users from "./pages/Users/Users.jsx";
 import Inventory from "./pages/Materiales/Inventory.jsx";
 import Materiales from "./pages/Materiales/Materiales.jsx";
 import Empresas from "./pages/Empresas/Empresas";
