@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { NavbarL } from "./components/NavbarL.jsx";// Importar NavbarL correctamente
 import QuickNotes from "./components/QuickNotes.jsx";
 
 import Inicio from "./pages/Home/Home";
@@ -14,7 +13,7 @@ import AccountSettingsUsers from "./pages/AccountSettings/AccountSettingsUsers";
 import RestablecerPassword from "./pages/RestablecerPassword/RestablecerPassword";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import Simulator from "./pages/Simulator/Simulator";
-import Users from "./pages/Users/Users";
+import Users from "./pages/Users/Users.jsx";
 import Inventory from "./pages/Materiales/Inventory.jsx";
 import Materiales from "./pages/Materiales/Materiales.jsx";
 import Empresas from "./pages/Empresas/Empresas";

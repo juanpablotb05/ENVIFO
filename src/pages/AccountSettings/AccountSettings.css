@@ -1,15 +1,22 @@
+/* --- Layout general --- */
 .account-settings-container {
   display: flex;
-  margin-top: 70px; /* Asegura que quede debajo del navbar */
+  justify-content: center;     /* Centra horizontalmente */
+  align-items: flex-start;     /* Queda alineado arriba */
+  gap: 32px;                   /* Espacio entre sidebar y main-content */
+  margin: 70px auto 0;         /* Debajo del navbar y centrado */
   padding: 20px;
+  max-width: 1200px;           /* Ancho máximo */
 }
 
+/* --- Sidebar --- */
 .sidebar {
   width: 350px;
   padding: 20px;
   background-color: #f4f4f4;
 }
 
+/* --- Perfil --- */
 .profile-section {
   text-align: center;
 }
@@ -22,7 +29,7 @@
   background-color: #ddd;
   overflow: hidden;
   display: flex;
-  align-items:center;
+  align-items: center;
   justify-content: center;
 }
 
@@ -44,6 +51,7 @@
   text-decoration: none;
 }
 
+/* --- Contenido principal --- */
 .main-content {
   flex: 1;
   padding: 20px;
@@ -54,8 +62,23 @@
   margin-bottom: 20px;
 }
 
+/* --- Formulario --- */
+.account-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;  /* Alíneado a la izquierda dentro del form */
+  max-width: 400px;         /* Limita el ancho del formulario */
+}
+
 .account-form .form-group {
   margin-bottom: 15px;
+}
+
+.account-form label {
+  margin-bottom: 5px;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
 }
 
 .account-form input {
@@ -64,6 +87,7 @@
   box-sizing: border-box;
 }
 
+/* --- Botón actualizar --- */
 .update-button {
   background-color: #ff6600;
   color: #fff;
@@ -76,20 +100,7 @@
   border-radius: 4px;
 }
 
-.account-form {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Alinea a la izquierda */
-  max-width: 400px; /* Limita el ancho del formulario */
-}
-
-.account-form label {
-  margin-bottom: 5px;
-  font-weight: 500;
-  text-align: left;
-  width: 100%;
-}
-
+/* --- Input archivo --- */
 .file-select {
   position: relative;
   display: inline-block;

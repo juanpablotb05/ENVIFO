@@ -14,5 +14,8 @@ body {
   box-sizing: border-box;
 }
 
+.main-content {
+  background-color: transparent !important; 
+}
 
 

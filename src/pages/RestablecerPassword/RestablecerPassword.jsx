@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './RestablecerPassword.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/ENVIFO.png';
+import NetBackground from "../../components/NetBackground"; 
 
 const PasswordRecovery = () => {
   const [password, setPassword] = useState('');
@@ -37,6 +38,7 @@ const PasswordRecovery = () => {
   };
 
   return (
+<NetBackground>
     <div className="Recuperar-password-container">
       <div className="contenedor-recuperacion">
         <div className="logo-cabecera">
@@ -65,6 +67,7 @@ const PasswordRecovery = () => {
         </form>
       </div>
     </div>
+    </NetBackground>
   );
 };
 
