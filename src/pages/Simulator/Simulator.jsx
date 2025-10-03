@@ -101,8 +101,7 @@ const objetos = [
         imagenMenu: '/Ambientes/habitacion.jpg',
         subtipos: [
             { nombre: "Cama", preview: "objetosJPG/cama.jpg", modelo: "objetos/habitacion/cama.glb"},
-            { nombre: "Armario", preview: "objetosJPG/armario.jpg", modelo: "objetos/habitacion/Armario4.glb" },
-            { nombre: "Estanteria", preview: "objetosJPG/estanteriademadera.jpg", modelo: "objetos/habitacion/Estanteria.glb" },
+            { nombre: "Armario", preview: "objetosJPG/armario.jpg", modelo: "objetos/Habitacion/armario.glb" },
             
         ],
     },
@@ -110,11 +109,9 @@ const objetos = [
         nombre: "Sala",
         imagenMenu: 'Ambientes/sala.jpg',
         subtipos: [
-            { nombre: "Sofa", preview: "objetosJPG/sofa.jpg", modelo: "objetos/sala/Sofablanco.glb" },
-            { nombre: "Sofa modular", preview: "/public/objetosJPG/mueblemodular.png", modelo: "objetos/sala/Sofa.glb" },
-            { nombre: "Mesa de centro", preview: "objetosJPG/mesadecentro.jpg", modelo: "objetos/sala/mesadecentro.glb" },
-            { nombre: "Mesa de centro en madera", preview: "objetosJPG/centrodemesamadera.jpg", modelo: "objetos/sala/Centrodemesa2.glb" },
-            { nombre: "Silla de descanso", preview: "objetosJPG/silladedescanso.webp", modelo: "objetos/sala/silladedescanso.glb" },
+            { nombre: "Sofa", preview: "objetosJPG/sofa.jpg", modelo: "objetos/sala/Sofa.glb" },
+            { nombre: "Mesa", preview: "public/mesadecentro.jpg", modelo: "objetos/sala/mesacentro.glb" },
+            { nombre: "Silla de descanso", preview: "objetosJPG/silladedescanso.webp", modelo: "objetos/habitacion/sillahabitacion.glb" },
         ],
     },
     {
@@ -131,7 +128,7 @@ const objetos = [
         nombre: "Comedor",
         imagenMenu: 'Ambientes/comedor.jpg',
         subtipos: [
-            { nombre: "Comedor", preview: "objetosJPG/comedor.jpg", modelo: "objetos/comedor/comedor.glb" },
+            { nombre: "Mesa", preview: "/Proyecto/public", modelo: "/" },
             { nombre: "Silla", preview: "public/silla.jpg", modelo: "/" },
         ],
     },
@@ -139,14 +136,14 @@ const objetos = [
         nombre: "Baño",
         imagenMenu: 'Ambientes/baño.jpg',
         subtipos: [
-            { nombre: "Inodoro", preview: "/public/objetosJPG/inodoro.jpg", modelo: "objetos/baños/inodoro.glb" },
-            { nombre: "Lavamanos", preview: "objetosJPG/lavamanos.jpg", modelo: "objetos/baños/Gabinete2.glb" },
+            { nombre: "Baño", preview: "objetosJPG/inodoro.jpg", modelo: "objetos/baños/inodoro.glb" },
+            { nombre: "Lavamanos", preview: "objetosJPG/lavamanos.jpg", modelo: "objetos/baños/lavamanos.glb" },
         ],
     },
     
 ];
 
-export default function Simulador() {
+export default function Simulator() {
     const contenedorRef = useRef(null);
     const escenaRef = useRef(null);
     const camaraRef = useRef(null);
@@ -654,7 +651,12 @@ export default function Simulador() {
         <div className="sidebar-container">
             {/* Barra lateral de íconos */}
             <div className="sidebar-icon-bar">
-                <img src={logo} alt="Logo" className="logo-img" />
+                 <button
+      onClick={() => navigate("/Dashboard")}
+      className="bg-transparent border-none p-0 cursor-pointer"
+    >
+      <img src={logo} alt="Logo" className="logo-img" />
+    </button>
                 <button
                     title="Perfil"
                     className={`icon-item ${menuAbierto === 'perfil' ? 'active' : ''}`}
@@ -878,4 +880,3 @@ export default function Simulador() {
     </div>
 );
 }
-
