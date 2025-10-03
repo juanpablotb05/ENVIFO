@@ -123,7 +123,7 @@ const objetos = [
         subtipos: [
             { nombre: "Encimera", preview: "objetosJPG/Encimera.jpg", modelo: "objetos/cocina/encimera.glb" },
             { nombre: "Salpicadero", preview: "public/silla.jpg", modelo: "objetos/cocina/salpicadero.glb" },
-            { nombre: "Cocina", preview: "public/silla.jpg", modelo: "objetos/cocina/cocina5.glb" },
+            { nombre: "Cocina", preview: "public/silla.jpg", modelo: "objetos/cocina/cocina5.glb" },git
         ],
         
     },
