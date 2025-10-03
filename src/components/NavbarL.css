@@ -4,7 +4,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px;
+  height: 60px;             /* Altura fija */
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -56,8 +56,12 @@
 .profile-img {
   width: 35px;
   height: 35px;
-  border-radius: 50%;
+  border-radius: 50%; 
 }
+.profile-label {
+  color: black
+}
+
 .profile-placeholder {
   width: 35px;
   height: 35px;
@@ -82,9 +86,9 @@
 }
 
 .profile-menu-item {
-  display: flex;                /* 🔹 ícono + texto en línea */
+  display: flex;                /* ícono + texto en línea */
   align-items: center;
-  gap: 8px;                     /* espacio entre ícono y texto */
+  gap: 8px;                    /* espacio entre ícono y texto */
   width: 100%;
   padding: 10px 16px;
   border: none;
@@ -151,14 +155,17 @@
 
 /* Contenido principal */
 .main-content {
-  padding: 80px 20px 20px; /* leave space for fixed navbar */
-   width: 100%;
-   display: block; /* o flex solo si lo necesitas */
+  padding: 80px 20px 20px; /* 80px para dejar espacio por el navbar (60px) + margen extra */
+  width: 100%;
+  display: block; /* o flex si necesitas */
 }
 
-/* Reduce top padding on small screens */
+/* Reduce top padding en pantallas pequeñas */
 @media (max-width: 640px) {
+  .navbar {
+    height: 50px;
+  }
   .main-content {
-    padding-top: 70px;
+    padding-top: 70px; /* Un poco más para evitar superposición */
   }
 }

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { NavbarL } from "../../components/NavbarL";
 import "./Categorias.css";
 import { useNavigate } from "react-router-dom";
+import FondoGlobe from "../../components/FondoGlobe"
+import logo from "../../assets/ENVIFO.png";
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -238,13 +240,17 @@ export default function Categories() {
 
   return (
     <NavbarL>
+     <FondoGlobe />
       <div className="categories-container">
-        <header className="categories-header">
+
+        <main className="categories-main">
+           <header className="categories-header">
           <h1>📂 Crear categoría</h1>
           <p className="muted">Escribe el nombre. Te mostraremos un slug sugerido.</p>
         </header>
-
-        <main className="categories-main">
+          <div className="brand-card" aria-hidden="true">
+            <img src={logo} alt="Logo" />
+          </div>
           {success && (
             <div className="banner success" role="status">
               {success}

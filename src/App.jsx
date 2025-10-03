@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { NavbarL } from "./components/NavbarL.jsx";// Importar NavbarL correctamente
 import QuickNotes from "./components/QuickNotes.jsx";
 
 import Inicio from "./pages/Home/Home";
