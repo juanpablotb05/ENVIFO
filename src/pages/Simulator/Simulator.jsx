@@ -155,69 +155,114 @@ const modelosTexturas = [
 ];
 
 const objetos = [
-    {
-        nombre: "Habitación",
-        imagenMenu: '/Ambientes/habitacion.jpg',
-        subtipos: [
-            { nombre: "Cama", preview: "objetosJPG/cama.jpg", modelo: "objetos/habitacion/cama.glb"},
-            { nombre: "Armario", preview: "objetosJPG/armario.jpg", modelo: "objetos/habitacion/Armario4.glb" },
-            { nombre: "Estanteria", preview: "objetosJPG/estanteriademadera.jpg", modelo: "objetos/habitacion/Estanteria.glb" },
-            
-        ],
-    },
-    {
-        nombre: "Sala",
-        imagenMenu: 'Ambientes/sala.jpg',
-        subtipos: [
-            { nombre: "Sofa", preview: "objetosJPG/sofa.jpg", modelo: "objetos/sala/Sofablanco.glb" },
-            { nombre: "Sofa modular", preview: "/public/objetosJPG/mueblemodular.png", modelo: "objetos/sala/Sofa.glb" },
-            { nombre: "Mesa de centro", preview: "objetosJPG/mesadecentro.jpg", modelo: "objetos/sala/mesadecentro.glb" },
-            { nombre: "Mesa de centro en madera", preview: "objetosJPG/centrodemesamadera.jpg", modelo: "objetos/sala/Centrodemesa2.glb" },
-            { nombre: "Silla de descanso", preview: "objetosJPG/silladedescanso.webp", modelo: "objetos/sala/silladedescanso.glb" },
-        ],
-    },
-    {
+  {
+    nombre: "Habitación",
+    imagenMenu: "/Ambientes/habitacion.jpg",
+    subtipos: [
+      {
+        nombre: "Cama",
+        preview: "objetosJPG/cama.jpg",
+        modelo: "objetos/habitacion/cama.glb",
+      },
+      {
+        nombre: "Armario",
+        preview: "objetosJPG/armario.jpg",
+        modelo: "objetos/Habitacion/armario.glb",
+      },
+    ],
+  },
+  {
+    nombre: "Sala",
+    imagenMenu: "/Ambientes/sala.jpg",
+    subtipos: [
+      {
+        nombre: "Sofa",
+        preview: "objetosJPG/sofa.jpg",
+        modelo: "objetos/sala/Sofa.glb",
+      },
+      {
+        nombre: "Mesa",
+        preview: "public/mesadecentro.jpg",
+        modelo: "objetos/sala/mesacentro.glb",
+      },
+      {
+        nombre: "Silla de descanso",
+        preview: "objetosJPG/silladedescanso.webp",
+        modelo: "objetos/habitacion/sillahabitacion.glb",
+      },
+    ],
+  },
+  {
+    nombre: "Cocina",
+    imagenMenu: "/Ambientes/cocina.jpg",
+    subtipos: [
+      {
+        nombre: "Encimera",
+        preview: "objetosJPG/Encimera.jpg",
+        modelo: "objetos/cocina/encimera.glb",
+      },
+      {
+        nombre: "Salpicadero",
+        preview: "public/silla.jpg",
+        modelo: "objetos/cocina/salpicadero.glb",
+      },
+      {
         nombre: "Cocina",
-        imagenMenu: 'Ambientes/cocina.jpg',
-        subtipos: [
-            { nombre: "Encimera", preview: "objetosJPG/Encimera.jpg", modelo: "objetos/cocina/encimera.glb" },
-            { nombre: "Salpicadero", preview: "public/silla.jpg", modelo: "objetos/cocina/salpicadero.glb" },
-            { nombre: "Cocina", preview: "public/silla.jpg", modelo: "objetos/cocina/cocina5.glb" },
-        ],
-        
-    },
-    {
-        nombre: "Comedor",
-        imagenMenu: 'Ambientes/comedor.jpg',
-        subtipos: [
-            { nombre: "Comedor", preview: "objetosJPG/comedor.jpg", modelo: "objetos/comedor/comedor.glb" },
-            { nombre: "Silla", preview: "public/silla.jpg", modelo: "/" },
-        ],
-    },
-    {
+        preview: "public/silla.jpg",
+        modelo: "objetos/cocina/cocina5.glb",
+      },
+    ],
+  },
+  {
+    nombre: "Comedor",
+    imagenMenu: "/Ambientes/comedor.jpg",
+    subtipos: [
+      { nombre: "Mesa", preview: "/Proyecto/public", modelo: "/" },
+      { nombre: "Silla", preview: "public/silla.jpg", modelo: "/" },
+    ],
+  },
+  {
+    nombre: "Baño",
+    imagenMenu: "/Ambientes/baño.jpg",
+    subtipos: [
+      {
         nombre: "Baño",
-        imagenMenu: 'Ambientes/baño.jpg',
-        subtipos: [
-            { nombre: "Inodoro", preview: "/public/objetosJPG/inodoro.jpg", modelo: "objetos/baños/inodoro.glb" },
-            { nombre: "Lavamanos", preview: "objetosJPG/lavamanos.jpg", modelo: "objetos/baños/Gabinete2.glb" },
-        ],
-    },
-    
+        preview: "objetosJPG/inodoro.jpg",
+        modelo: "objetos/baños/inodoro.glb",
+      },
+      {
+        nombre: "Lavamanos",
+        preview: "objetosJPG/lavamanos.jpg",
+        modelo: "objetos/baños/lavamanos.glb",
+      },
+    ],
+  },
 ];
 
-export default function Simulador() {
-    const contenedorRef = useRef(null);
-    const escenaRef = useRef(null);
-    const camaraRef = useRef(null);
-    const renderizadorRef = useRef(null);
-    const controlesRef = useRef(null);
-    const lanzadorRayos = useRef(new THREE.Raycaster());
-    const raton = useRef(new THREE.Vector2());
-    const objetoSeleccionadoRef = useRef(null);
-    const objetoArrastrableRef = useRef(null);
-    const planoPiso = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0));
-    const offset = useRef(new THREE.Vector3());
-    const navigate = useNavigate();
+const API_BASE = "https://envifo-java-backend-api-rest.onrender.com/api";
+
+export default function Simulator() {
+  const contenedorRef = useRef(null);
+  const escenaRef = useRef(null);
+  const camaraRef = useRef(null);
+  const renderizadorRef = useRef(null);
+  const controlesRef = useRef(null);
+  const lanzadorRayos = useRef(new THREE.Raycaster());
+  const raton = useRef(new THREE.Vector2());
+  const objetoSeleccionadoRef = useRef(null);
+  const objetoArrastrableRef = useRef(null);
+  const planoPiso = useRef(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0));
+  const offset = useRef(new THREE.Vector3());
+  const navigate = useNavigate();
+  const idMaterialPiso = useRef(null); // ID para piso (backend GLB)
+  // Refs para texturas de paredes/techo (locales, rutas)
+  const texturaParedFrontal = useRef(null);
+  const texturaParedTrasera = useRef(null);
+  const texturaParedIzquierdaInferior = useRef(null);
+  const texturaParedIzquierdaMedia = useRef(null);
+  const texturaParedIzquierdaSuperior = useRef(null);
+  const texturaParedDerecha = useRef(null);
+  const texturaTecho = useRef(null);
 
   // Rotación con el mouse
   const isRotating = useRef(false);
@@ -1285,76 +1330,128 @@ export default function Simulador() {
 
   return (
     <div className="simulator-container">
-        <div ref={contenedorRef}></div>
-        <div className="sidebar-container">
-            {/* Barra lateral de íconos */}
-            <div className="sidebar-icon-bar">
-                <img src={logo} alt="Logo" className="logo-img" />
-                <button
-                    title="Perfil"
-                    className={`icon-item ${menuAbierto === 'perfil' ? 'active' : ''}`}
-                    onClick={() => {
-                        setMenuAbierto(menuAbierto === 'perfil' ? null : 'perfil');
-                        setCategoriaMaterialesAbierta(null);
-                        setCategoriaObjetosAbierta(null);
-                        setCategoriaTexturasAbierta(null);
-                    }}
-                >
-                    <FaUserCircle />
-                </button>
-                <button
-                    title="Materiales"
-                    className={`icon-item ${menuAbierto === 'materiales' ? 'active' : ''}`}
-                    onClick={() => {
-                        setMenuAbierto(menuAbierto === 'materiales' ? null : 'materiales');
-                        setCategoriaObjetosAbierta(null);
-                        setCategoriaTexturasAbierta(null);
-                    }}
-                >
-                    <FaPalette />
-                </button>
-                <button
-                    title="Objetos"
-                    className={`icon-item ${menuAbierto === 'objetos' ? 'active' : ''}`}
-                    onClick={() => {
-                        setMenuAbierto(menuAbierto === 'objetos' ? null : 'objetos');
-                        setCategoriaMaterialesAbierta(null);
-                        setCategoriaTexturasAbierta(null);
-                    }}
-                >
-                    <FaCube />
-                </button>
-                <button
-                    title="Texturas"
-                    className={`icon-item ${menuAbierto === 'texturas' ? 'active' : ''}`}
-                    onClick={() => {
-                        setMenuAbierto(menuAbierto === 'texturas' ? null : 'texturas');
-                        setCategoriaMaterialesAbierta(null);
-                        setCategoriaObjetosAbierta(null);
-                    }}
-                >
-                    <GiStoneWall />
-                </button>
-                <button
-                    title="Iluminación"
-                    className={`icon-item ${menuAbierto === 'iluminacion' ? 'active' : ''}`}
-                    onClick={() => {
-                        setMenuAbierto(menuAbierto === 'iluminacion' ? null : 'iluminacion');
-                        setCategoriaMaterialesAbierta(null);
-                        setCategoriaObjetosAbierta(null);
-                        setCategoriaTexturasAbierta(null);
-                    }}
-                >
-                    <FaLightbulb />
-                </button>
-                <button className="icon-item">
-                    <FaSave />
-                </button>
-                <button className="icon-item">
-                    <MdAddCircle />
-                </button>
-                
-            </div>
+      <div ref={contenedorRef}></div>
+      <div className="sidebar-container">
+        <div className="sidebar-icon-bar">
+          <button
+            onClick={() => navigate("/Dashboard")}
+            className="bg-transparent border-none p-0 cursor-pointer"
+          >
+            <img src={logo} alt="Logo" className="logo-img" />
+          </button>
+          <button
+            title="Perfil"
+            className={`icon-item ${menuAbierto === "perfil" ? "active" : ""}`}
+            onClick={() => {
+              if (!verificarAutenticacion()) {
+                solicitarAutenticacion(
+                  "Para acceder a tu perfil necesitas iniciar sesión."
+                );
+                return;
+              }
+              setMenuAbierto(menuAbierto === "perfil" ? null : "perfil");
+              setCategoriaMaterialesAbierta(null);
+              setCategoriaObjetosAbierta(null);
+              setCategoriaTexturasAbierta(null);
+              setSelectedSubtipo(null);
+              setMostrarGuardarPanel(false);
+              setMostrarProyectos(false);
+            }}
+          >
+            <FaUserCircle />
+          </button>
+          <button
+            title="Personalizar"
+            className={`icon-item ${
+              menuAbierto === "materiales" ? "active" : ""
+            }`}
+            onClick={() => {
+              setMenuAbierto(
+                menuAbierto === "materiales" ? null : "materiales"
+              );
+              setCategoriaObjetosAbierta(null);
+              setCategoriaTexturasAbierta(null);
+              setSelectedSubtipo(null);
+              setMostrarGuardarPanel(false);
+              setMostrarProyectos(false);
+            }}
+          >
+            <FaPalette />
+          </button>
+          <button
+            title="Objetos"
+            className={`icon-item ${menuAbierto === "objetos" ? "active" : ""}`}
+            onClick={() => {
+              setMenuAbierto(menuAbierto === "objetos" ? null : "objetos");
+              setCategoriaMaterialesAbierta(null);
+              setCategoriaTexturasAbierta(null);
+              setSelectedSubtipo(null);
+              setMostrarGuardarPanel(false);
+              setMostrarProyectos(false);
+            }}
+          >
+            <FaCube />
+          </button>
+          <button
+            title="Materiales"
+            className={`icon-item ${
+              menuAbierto === "texturas" ? "active" : ""
+            }`}
+            onClick={() => {
+              setMenuAbierto(menuAbierto === "texturas" ? null : "texturas");
+              setCategoriaMaterialesAbierta(null);
+              setCategoriaObjetosAbierta(null);
+              setSelectedSubtipo(null);
+              setMostrarGuardarPanel(false);
+              setMostrarProyectos(false);
+            }}
+          >
+            <GiStoneWall />
+          </button>
+          <button
+            title="Iluminación"
+            className={`icon-item ${
+              menuAbierto === "iluminacion" ? "active" : ""
+            }`}
+            onClick={() => {
+              setMenuAbierto(
+                menuAbierto === "iluminacion" ? null : "iluminacion"
+              );
+              setCategoriaMaterialesAbierta(null);
+              setCategoriaObjetosAbierta(null);
+              setCategoriaTexturasAbierta(null);
+              setSelectedSubtipo(null);
+              setMostrarGuardarPanel(false);
+              setMostrarProyectos(false);
+            }}
+          >
+            <FaLightbulb />
+          </button>
+          <button
+            className={`icon-item ${mostrarGuardarPanel ? "active" : ""}`}
+            title="Guardar"
+            onClick={() => {
+              if (!verificarAutenticacion()) {
+                solicitarAutenticacion(
+                  "Para guardar proyectos necesitas iniciar sesión."
+                );
+                return;
+              }
+              setMenuAbierto(null);
+              setCategoriaMaterialesAbierta(null);
+              setCategoriaObjetosAbierta(null);
+              setCategoriaTexturasAbierta(null);
+              setSelectedSubtipo(null);
+              setMostrarGuardarPanel(!mostrarGuardarPanel);
+              setMostrarProyectos(false);
+            }}
+          >
+            <FaSave />
+          </button>
+          <button className="icon-item">
+            <MdAddCircle />
+          </button>
+        </div>
 
         <div
           className={`sidebar-content-panel ${

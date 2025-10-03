@@ -16,6 +16,7 @@ body {
 
 .main-content {
   background-color: transparent !important; 
+  padding: 0 !important; 
 }
 
 

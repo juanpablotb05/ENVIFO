@@ -181,9 +181,6 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
             </Link>
           )}
 
-          <a href="#projects" onClick={() => setVista("proyectos")}>
-            🗂️ Proyectos
-          </a>
           {permiso === "GLOBAL" ||
           sessionStorage.getItem("editMateriales") === "true" ? (
             <Link to="/Inventory" onClick={() => setIsMenuOpen(false)}>
