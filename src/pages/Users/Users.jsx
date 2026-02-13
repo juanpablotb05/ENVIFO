@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { NavbarL } from "../../components/NavbarL";
 
+
 export default function Users() {
   const navigate = useNavigate();
 

@@ -3,6 +3,7 @@ import { NavbarL } from "../../components/NavbarL";
 import { useNavigate } from "react-router-dom";
 import "./Inventory.css";
 
+
 const API_BASE = (
   import.meta.env.VITE_API_BASE ||
   "https://envifo-java-backend-api-rest.onrender.com/api"
@@ -744,7 +745,7 @@ export default function Inventory() {
               })}
             </div>
 
-            {/* 🔍 Input de búsqueda */}
+            {/*  Input de búsqueda */}
             <div className="buscador-materiales">
               <input
                 type="text"
@@ -763,7 +764,7 @@ export default function Inventory() {
                 onClick={fetchUltimoMaterial}
                 disabled={loadingUltimo}
               >
-                {loadingUltimo ? "Cargando..." : "📋 Ver último material"}
+                {loadingUltimo ? "Cargando..." : " Ver último material"}
               </button>
               <input
                 ref={inputRef}
@@ -776,7 +777,7 @@ export default function Inventory() {
 
             {loading ? (
               <p>Cargando materiales...</p>
-            ) : filteredMateriales.length > 0 ? ( // 👈 usamos la lista filtrada
+            ) : filteredMateriales.length > 0 ? ( //  usamos la lista filtrada
               <div className="materiales-grid">
                 {filteredMateriales.map((m) => (
                   <div key={m.idMaterial} className="material-card">
@@ -788,7 +789,7 @@ export default function Inventory() {
                     <div className="material-body">
                       <p>{m.nameMaterial}</p>
                       <button
-                        className="btn-orange"
+                        className="btn-fancy"
                         onClick={() => setSelectedMaterial(m)}
                       >
                         Ver detalle

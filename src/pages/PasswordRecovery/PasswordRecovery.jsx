@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './PasswordRecovery.css';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/ENVIFO.png';
+import NetBackground from "../../components/NetBackground"; 
 
 const PasswordRecovery = () => {
   const [codigoVerificacion, setCodigoVerificacion] = useState('');
@@ -90,6 +91,7 @@ const PasswordRecovery = () => {
   };
 
   return (
+    <NetBackground>
     <div className="contenedor-recuperacion-contrasena">
       <div className="cabecera">
         <div className="contenedor-logo">
@@ -134,6 +136,7 @@ const PasswordRecovery = () => {
         {mensaje && <p className="mensaje-error">{mensaje}</p>}
       </div>
     </div>
+    </NetBackground>
   );
 };
 

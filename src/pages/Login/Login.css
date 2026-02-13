@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
 
@@ -274,7 +273,7 @@ input:focus {
 	width: 40px;
 }
 
-footer {
+.login-page footer {
     background-color: #222;
     color: #fff;
     font-size: 10px;
@@ -286,21 +285,9 @@ footer {
     z-index: 999;
 }
 
-footer p {
+.login-page footer p {
     margin: 10px 0;
 }
-
-/*
-.body {
-	height: 100vh;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	background-color: #f0f0f0; /* Opcional, mejora contraste */
-	/* margin: 0;
-	font-family: 'Montserrat', sans-serif;
-} 
-*/
 
 .radio-section {
   display: flex;
@@ -363,8 +350,7 @@ footer p {
 }
 
 .page-wrapper {
+   display: flex;
   height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
 }

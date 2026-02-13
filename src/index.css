@@ -2,37 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+body {
   margin: 0;
   padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5;
+  display: block !important;
+  justify-content: initial !important;
+  align-items: initial !important;
+  min-height: 100vh;
   box-sizing: border-box;
 }
 
-html,body,#root {
-  min-height: auto;
-  height: auto;
-  overflow-y: auto;
+.main-content {
+  background-color: transparent !important; 
+  padding: 0 !important; 
 }
-
-.app-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-.main-centered {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-}
-
-.login-main {
-  flex: 1;
-  display: block;
-  padding: 2rem 0;
-}
-
 
 

@@ -7,7 +7,7 @@ import { NavbarL } from "../../components/NavbarL";
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // ✅ Protección de ruta
+  //  Protección de ruta
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     if (!token) navigate("/Login");
@@ -15,7 +15,6 @@ export default function Dashboard() {
 
   return (
     <NavbarL>
-      <Layout>
         <div className="dashboard">
           <header className="header">
             <h1>Dashboard</h1>
@@ -88,7 +87,6 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </Layout>
     </NavbarL>
   );
 }

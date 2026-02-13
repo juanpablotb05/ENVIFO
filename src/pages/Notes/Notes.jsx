@@ -39,7 +39,7 @@ const toLocal = (n) => ({
 
 export default function Notes() {
   const [notes, setNotes] = useState([]);
-  const [allNotes, setAllNotes] = useState([]); // 🔑 todas las notas originales
+  const [allNotes, setAllNotes] = useState([]); //  todas las notas originales
   const [text, setText] = useState('');
   const [title, setTitle] = useState('');
   const [editing, setEditing] = useState(null);
@@ -71,7 +71,7 @@ export default function Notes() {
       const mapped = (arr || []).map(toLocal).filter((n) => n.id && n.body);
       const ordered = sortByUpdated(mapped);
       setNotes(ordered);
-      setAllNotes(ordered); // ✅ guardamos todas
+      setAllNotes(ordered); //  guardamos todas
       writeNotes(ordered);
     } catch (error) {
       console.error('Error fetching notes:', error);
@@ -97,7 +97,7 @@ export default function Notes() {
     };
     const updatedList = sortByUpdated([temp, ...notes]);
     setNotes(updatedList);
-    setAllNotes(updatedList); // ✅ también en allNotes
+    setAllNotes(updatedList); //  también en allNotes
     writeNotes(updatedList);
     setText('');
     setTitle('');

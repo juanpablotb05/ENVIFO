@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './ForgotPassword.css'; 
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/ENVIFO.png';
-import Layout from "../../components/Layout";
+import NetBackground from "../../components/NetBackground"; 
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -45,7 +45,7 @@ const forgotAction = () => {
 };
 
   return (
-    <Layout>
+    <NetBackground>
     <div className="forgot-password-container">
       <div className="logo-section">
         <img src={logo} alt="Envifo Logo" className="logo" onClick={() => navigate('/')}/>
@@ -79,7 +79,7 @@ const forgotAction = () => {
         </button>
       </div>
     </div>
-    </Layout>
+    </NetBackground>
   );
 };
 

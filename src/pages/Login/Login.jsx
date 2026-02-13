@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import logo from "../../assets/ENVIFO.png";
 import { HiOutlineLogin } from "react-icons/hi";
+import { Layout } from "../../components/Layout";
+import NetBackground from "../../components/NetBackground"; 
 
 const Login = () => {
   const [isRightPanelActive, setRightPanelActive] = useState(false);
@@ -172,10 +174,10 @@ const Login = () => {
         const token = data.accessToken;
         const tokenData = jwtDecode(token);
 
-        // 🔐 Siempre guardar el token
+        //  Siempre guardar el token
         sessionStorage.setItem("token", token);
 
-        // 📌 Datos básicos
+        //  Datos básicos
         sessionStorage.setItem("email", tokenData.email || "");
         sessionStorage.setItem("nombre", tokenData.nombre || tokenData.userName || "Sin Nombre");
         sessionStorage.setItem("usuario", tokenData.idUsuario || tokenData.idCliente || "");
@@ -186,20 +188,20 @@ const Login = () => {
         sessionStorage.setItem("telefono", tokenData.telefono || "");
         sessionStorage.setItem("url", tokenData.url || "");
 
-        // 🖼 Imagen
+        //  Imagen
         if (tokenData.imagen) {
           sessionStorage.setItem("idImagen", tokenData.imagen.idFile || "");
           sessionStorage.setItem("imagen", tokenData.imagen.keyR2 || "");
         }
 
-        // ✅ Permisos
+        //  Permisos
         if (tokenData.Permisos) {
           Object.entries(tokenData.Permisos).forEach(([key, value]) => {
             sessionStorage.setItem(key, value);
           });
         }
 
-        // 🔄 Opcionales
+        //  Opcionales
         if (tokenData.primerNombre) sessionStorage.setItem("primerNombre", tokenData.primerNombre);
         if (tokenData.segundoNombre) sessionStorage.setItem("segundoNombre", tokenData.segundoNombre);
         if (tokenData.primerApellido) sessionStorage.setItem("primerApellido", tokenData.primerApellido);
@@ -226,12 +228,13 @@ const Login = () => {
         }
       });
 
-    // 🔄 Limpiar inputs siempre
+    //  Limpiar inputs siempre
     userLogRef.current.value = "";
     passLogRef.current.value = "";
   };
 
   return (
+    <NetBackground>
     <div className={`container ${isRightPanelActive ? "right-panel-active" : ""}`}>
       {/* REGISTRO */}
       <div className="form-container sign-up-container">
@@ -327,6 +330,7 @@ const Login = () => {
         </div>
       </div>
     </div>
+    </NetBackground>
   );
 };
 

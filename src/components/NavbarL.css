@@ -4,7 +4,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px;
+  height: 60px;             /* Altura fija */
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -16,7 +16,7 @@
 .navbar-container {
   width: 100%;
   max-width: 1200px;
-  margin: 0;
+  margin: 0 auto;
   padding: 0 20px;
   display: flex;
   align-items: center;
@@ -52,17 +52,16 @@
   background: none;
   border: none;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  flex-direction: row-reverse; 
-  gap: 8px;
 }
-
 .profile-img {
   width: 35px;
   height: 35px;
-  border-radius: 50%;
+  border-radius: 50%; 
 }
+.profile-label {
+  color: black
+}
+
 .profile-placeholder {
   width: 35px;
   height: 35px;
@@ -86,17 +85,10 @@
   padding: 6px 0;
 }
 
-.profile-label {
-  margin-left: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #333;
-}
-  
 .profile-menu-item {
-  display: flex;                /* 🔹 ícono + texto en línea */
+  display: flex;                /* ícono + texto en línea */
   align-items: center;
-  gap: 8px;                     /* espacio entre ícono y texto */
+  gap: 8px;                    /* espacio entre ícono y texto */
   width: 100%;
   padding: 10px 16px;
   border: none;
@@ -123,6 +115,7 @@
   box-shadow: 2px 0 8px rgba(0,0,0,0.2);
   transition: left 0.3s ease;
   z-index: 1100;
+  overflow-y: auto;
 }
 .side-menu.open {
   left: 0;
@@ -137,14 +130,13 @@
 .side {
   display: flex;
   flex-direction: column;
-  padding: 2px;
+  padding: 10px;
 }
 .side a {
-  padding: 2px;
+  padding: 10px;
   text-decoration: none;
   color: #333;
-  border-radius: 2px;
-  margin: 5px 0;
+  border-radius: 4px;
 }
 .side a:hover {
   background: #f5f5f5;
@@ -163,14 +155,17 @@
 
 /* Contenido principal */
 .main-content {
-  padding: 80px 20px 20px; /* leave space for fixed navbar */
-   width: 100%;
-   display: block; /* o flex solo si lo necesitas */
+  padding: 80px 20px 20px; /* 80px para dejar espacio por el navbar (60px) + margen extra */
+  width: 100%;
+  display: block; /* o flex si necesitas */
 }
 
-/* Reduce top padding on small screens */
+/* Reduce top padding en pantallas pequeñas */
 @media (max-width: 640px) {
+  .navbar {
+    height: 50px;
+  }
   .main-content {
-    padding-top: 70px;
+    padding-top: 70px; /* Un poco más para evitar superposición */
   }
 }

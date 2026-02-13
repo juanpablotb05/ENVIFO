@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import logo from "../assets/ENVIFO.png";
 import "./Navbar.css";
 import { FaRegUserCircle } from "react-icons/fa"; // importamos el icono
+import { TbHexagon3D } from "react-icons/tb";
+
 
 function Navbar() {
   return (
@@ -16,10 +18,12 @@ function Navbar() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/Simulator">Simulador 3D</Link>
+          <Link to="/Contact">Contact</Link>
         </li>
         <li>
-          <Link to="/Contact">Contact</Link>
+          <Link to="/Simulator">
+            <TbHexagon3D className="w-6 h-6 text-white" />
+          </Link>
         </li>
       </ul>
 

@@ -45,7 +45,7 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
   // 🔹 Actualiza título según la ruta
   useEffect(() => {
     const path = (location.pathname || "").toLowerCase();
-    if (path.includes("/users")) setVista("Users");
+    if (path.includes("/Users")) setVista("Users");
     else if (path.includes("/accountsettings")) setVista("AccountSettings");
     else if (path.includes("/simulator")) setVista("Simulador");
     else if (path.includes("/materiales")) setVista("Materiales");
@@ -55,6 +55,8 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
     else if (path.includes("/maps")) setVista("Maps");
     else if (path.includes("/dashboard")) setVista("dashboard");
     else if (path.includes("/userprofile")) setVista("UserProfile");
+    else if (path.includes("/Inventory")) setVista("Inventory");
+    else if (path.includes("/Users")) setVista("Users");
     else if (path === "/" || path === "") setVista("home");
     else setVista("dashboard");
   }, [location]);
@@ -62,7 +64,7 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
   // 🔹 Título dinámico
   const tituloSegunVista = () => {
     const v = (vista || "").toLowerCase();
-    if (v === "users") return "Panel de Usuarios";
+    if (v === "Users") return "Panel de Usuarios";
     if (v === "proyectos") return "Proyectos";
     if (v === "accountsettings") return "Configuración de la cuenta";
     if (v === "simulador") return "Simulador 3D";
@@ -73,6 +75,7 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
     if (v === "maps") return "Mapas";
     if (v === "userprofile") return "Perfil de Usuario";
     if (v === "home") return "Inicio";
+    if (v === "Inventory") return "Inventory";
     return "Dashboard";
   };
 
@@ -178,9 +181,6 @@ export function NavbarL({ children, profilePhotoProp, profileNameProp }) {
             </Link>
           )}
 
-          <a href="#projects" onClick={() => setVista("proyectos")}>
-            🗂️ Proyectos
-          </a>
           {permiso === "GLOBAL" ||
           sessionStorage.getItem("editMateriales") === "true" ? (
             <Link to="/Inventory" onClick={() => setIsMenuOpen(false)}>
